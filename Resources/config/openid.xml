@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="security.authentication.provider.openid.class">Fp\OpenIdBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider</parameter>
+        <parameter key="security.authentication.listener.openid.class">Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener</parameter>
+        <parameter key="security.authentication.openid_entry_point.class">Fp\OpenIdBundle\Security\Http\EntryPoint\OpenIdEntryPoint</parameter>
+
+        <parameter key="openid.light_open_id.class">Fp\OpenIdBundle\Bridge\LightOpenId\LightOpenId</parameter>
+        <parameter key="openid.light_open_id.trust_root"></parameter>
+
+        <parameter key="security.authentication.provider.openid.parameters"></parameter>
+
+        <parameter key="openid.view.simple_form">FpOpenIdBundle:OpenId:simple_form.html.twig</parameter>
+    </parameters>
+
+    <services>
+
+        <service id="security.authentication.provider.openid" class="%security.authentication.provider.openid.class%" >
+           <argument type="service" id="service_container" />
+           <argument>%security.authentication.provider.openid.parameters%</argument>
+        </service>
+
+        <service
+            id="security.authentication.listener.openid"
+            class="%security.authentication.listener.openid.class%"
+            parent="security.authentication.listener.abstract"
+            abstract="true">
+        </service>
+
+        <service id="security.authentication.openid_entry_point" class="%security.authentication.openid_entry_point.class%">
+        </service>
+
+        <service id="openid.light_open_id" class="%openid.light_open_id.class%">
+            <argument>%openid.light_open_id.trust_root%</argument>
+        </service>
+    </services>
+</container>
