@@ -24,8 +24,10 @@ class FpOpenIdExtension extends Extension
         $container->setParameter('security.authentication.provider.openid.parameters', array(
             'routerService' => $configs['provider']['router_service'],
             'lightOpenIdService' => $configs['provider']['light_open_id_service'],
+            'tokenPersisterService' => $configs['provider']['token_persister_service'],
             'roles' => $configs['provider']['roles'],
             'return_route' => $configs['provider']['return_route'],
+            'approve_route' => $configs['provider']['approve_route'],
             'openid_required_options' => $configs['provider']['options_required'],
             'openid_optional_options' => $configs['provider']['options_optional'],
         ));

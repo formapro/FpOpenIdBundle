@@ -9,6 +9,9 @@
         <parameter key="security.authentication.listener.openid.class">Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener</parameter>
         <parameter key="security.authentication.openid_entry_point.class">Fp\OpenIdBundle\Security\Http\EntryPoint\OpenIdEntryPoint</parameter>
 
+        <parameter key="security.authentication.token_persister.class">Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister</parameter>
+        <parameter key="security.authentication.token_persister.sessionKey">_security.authentication.token_persister.openid</parameter>
+
         <parameter key="openid.light_open_id.class">LightOpenID</parameter>
         <parameter key="openid.light_open_id.trust_root"></parameter>
 
@@ -18,6 +21,11 @@
     </parameters>
 
     <services>
+
+        <service id="security.authentication.token_persister" class="%security.authentication.token_persister.class%" >
+            <argument>%security.authentication.token_persister.sessionKey%</argument>
+            <argument type="service" id="session" />
+        </service>
 
         <service id="security.authentication.provider.openid" class="%security.authentication.provider.openid.class%" >
            <argument type="service" id="service_container" />
