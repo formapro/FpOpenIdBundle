@@ -18,12 +18,14 @@ class TokenPersister
 
     public function get()
     {
-        return $this->session->getFlash($this->sessionKey);
+        return $this->session->get($this->sessionKey);
+        //return $this->session->getFlash($this->sessionKey);
     }
     
     public function set(OpenIdToken $token)
     {
-        $this->session->setFlash($this->sessionKey, $token);
+        $this->session->set($this->sessionKey, $token);
+        //$this->session->setFlash($this->sessionKey, $token);
     }
 }
 
