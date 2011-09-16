@@ -3,8 +3,6 @@ namespace Fp\OpenIdBundle\Security\Http\Firewall;
 
 use Symfony\Component\Security\Http\Firewall\AbstractAuthenticationListener;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
 
@@ -19,6 +17,9 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
         } else if ($openIdentifier = $request->get("openid_op_endpoint", false)) {
             $token = new OpenIdToken($openIdentifier);
             $token->setBeginning(false);
+        } elseif ($openIdentifier = $request->get("openid_approved", false)) {
+            $token = new OpenIdToken($openIdentifier);
+            $token->setBeginning(false);
         }
 
         if (false == $token) {
@@ -27,7 +28,10 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
 
         $result = $this->authenticationManager->authenticate($token);
 		if($result instanceof OpenIdToken && $url = $result->getAuthenticateUrl()) {
-	        return new RedirectResponse($url);
+	        return $this->httpUtils->createRedirectResponse($request, $url);
+        }
+        if($result instanceof OpenIdToken && $url = $result->getApproveUrl()) {
+	        return $this->httpUtils->createRedirectResponse($request, $url);
         }
 
 		return $result;

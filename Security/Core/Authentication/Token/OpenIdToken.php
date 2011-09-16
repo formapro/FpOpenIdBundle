@@ -9,6 +9,8 @@ class OpenIdToken extends AbstractToken
 
     protected $authenticateUrl;
 
+    protected $approveUrl;
+
     protected $beginning;
 
     public function __construct($openIdentifier, array $roles = array())
@@ -42,7 +44,17 @@ class OpenIdToken extends AbstractToken
 
     public function setAuthenticateUrl($url)
     {
-        return $this->authenticateUrl = $url;
+        $this->authenticateUrl = $url;
+    }
+
+    public function getApproveUrl()
+    {
+        return $this->approveUrl;
+    }
+    
+    public function setApproveUrl($url)
+    {
+        $this->approveUrl = $url;
     }
 
     /**
@@ -59,5 +71,16 @@ class OpenIdToken extends AbstractToken
 
     public function getCredentials()
     {
+    }
+
+    public function serialize()
+    {
+        return serialize(array($this->openIdentifier, parent::serialize()));
+    }
+
+    public function unserialize($str)
+    {
+        list($this->openIdentifier, $parentStr) = unserialize($str);
+        parent::unserialize($parentStr);
     }
 }

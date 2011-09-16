@@ -22,7 +22,9 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
         $this->parameters = array_merge(array(
             'routerService' => null,
             'lightOpenIdService' => null,
+            'tokenPersisterService' => null,
             'return_route' => null,
+            'approve_route' => null,
             'roles' => array(),
             'openid_required_options' => array(),
             'openid_optional_options' => array()), $parameters);
@@ -58,6 +60,14 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 
     public function finish(OpenIdToken $token)
     {
+        if ($token = $this->getTokenPersister()->get()) {
+            if (false == $token->getUser()) {
+                throw new AuthenticationException('Authentication approving was canceled');
+            }
+
+            return $token;
+        }
+
         $lightOpenId = $this->getLightOpenId();
         if (false == $lightOpenId->validate()) {
             if($lightOpenId->mode == 'cancel') {
@@ -70,9 +80,25 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
         $token = new OpenIdToken($lightOpenId->identity, $this->parameters['roles']);
         $token->setAttributes($lightOpenId->getAttributes());
 
+        if ($this->parameters['approve_route']) {
+            $this->getTokenPersister()->set($token);
+            $token->setApproveUrl($this->getRouter()->generate($this->parameters['approve_route'], array(), true));
+        }
+
         return $token;
     }
 
+    /**
+     * @return \Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister
+     */
+    protected function getTokenPersister()
+    {
+        return $this->container->get($this->parameters['tokenPersisterService']);
+    }
+
+    /**
+     * @return RouterInterface
+     */
     protected function getRouter()
     {
         return $this->container->get($this->parameters['routerService']);
