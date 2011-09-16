@@ -9,7 +9,7 @@
         <parameter key="security.authentication.listener.openid.class">Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener</parameter>
         <parameter key="security.authentication.openid_entry_point.class">Fp\OpenIdBundle\Security\Http\EntryPoint\OpenIdEntryPoint</parameter>
 
-        <parameter key="openid.light_open_id.class">Fp\OpenIdBundle\Bridge\LightOpenId\LightOpenId</parameter>
+        <parameter key="openid.light_open_id.class">LightOpenID</parameter>
         <parameter key="openid.light_open_id.trust_root"></parameter>
 
         <parameter key="security.authentication.provider.openid.parameters"></parameter>
