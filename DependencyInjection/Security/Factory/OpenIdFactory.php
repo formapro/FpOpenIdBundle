@@ -50,12 +50,5 @@ class OpenIdFactory extends AbstractFactory
 	protected function createEntryPoint($container, $id, $config, $defaultEntryPoint)
     {
         return $defaultEntryPoint;
-        $entryPointId = 'security.authentication.openid_entry_point'.$id;
-        
-        $container
-            ->setDefinition($entryPointId, new DefinitionDecorator('security.authentication.openid_entry_point'))
-			->addArgument($config['login_path']);
-
-        return $entryPointId;
     }
 }
