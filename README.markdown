@@ -1,6 +1,6 @@
 # Overview
 
-Integrates OpenId feature to syfony's security layer.
+Integrates OpenId feature to symfony's security layer.
 Internally uses [LightOpenID](http://gitorious.org/lightopenid)
 
 # Get started
