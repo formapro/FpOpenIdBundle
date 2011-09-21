@@ -15,14 +15,7 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
             return null;
         }
 
-        $openIdResponse = $request->query->all();
-        array_walk($openIdResponse, function(&$value, $key) {
-            if (false === strpos($key, 'openid')) {
-                $value = null;
-            }
-        });
-
-        $token->setResponse(array_filter($openIdResponse));
+        $token->setResponse($this->getExternalResponse($request));
 
         $result = $this->authenticationManager->authenticate($token);
 
@@ -35,6 +28,19 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
 
         return $result;
     }
+
+    protected function getExternalResponse(Request $request)
+    {
+        $response = $request->query->all();
+        array_walk($response, function(&$value, $key) {
+            if (false === strpos($key, 'openid')) {
+                $value = null;
+            }
+        });
+
+        return array_filter($response);
+    }
+    
 
     /**
      * 
