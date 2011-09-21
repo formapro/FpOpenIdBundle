@@ -51,8 +51,6 @@ class LightOpenIdConsumer implements ConsumerInterface
            throw new AuthenticationException('Authentication was not finished successfully');
         }
 
-
-
         return array('identity' => $lightOpenId->identity) + $lightOpenId->getAttributes();
     }
 
