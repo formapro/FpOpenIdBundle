@@ -5,41 +5,46 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="security.authentication.provider.openid.class">Fp\OpenIdBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider</parameter>
-        <parameter key="security.authentication.listener.openid.class">Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener</parameter>
+        <parameter key="fp_openid.security.authentication.provider.class">Fp\OpenIdBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider</parameter>
+        <parameter key="fp_openid.security.authentication.provider.parameters"></parameter>
 
-        <parameter key="security.authentication.token_persister.class">Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister</parameter>
-        <parameter key="security.authentication.token_persister.sessionKey">_security.authentication.token_persister.openid</parameter>
+        <parameter key="fp_openid.security.authentication.listener.class">Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener</parameter>
 
-        <parameter key="openid.light_open_id.class">LightOpenID</parameter>
-        <parameter key="openid.light_open_id.trust_root"></parameter>
+        <parameter key="fp_openid.security.authentication.token_persister.class">Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister</parameter>
+        <parameter key="fp_openid.security.authentication.token_persister.sessionKey">_fp_openid.security.authentication.token_persister.openid</parameter>
 
-        <parameter key="security.authentication.provider.openid.parameters"></parameter>
+        <parameter key="fp_openid.consumer.light_open_id.class">Fp\OpenIdBundle\Bridge\Consumer\LightOpenIdConsumer</parameter>
+        <parameter key="fp_openid.consumer.light_open_id.parameters"></parameter>
 
         <parameter key="openid.view.simple_form">FpOpenIdBundle:OpenId:simple_form.html.twig</parameter>
     </parameters>
 
     <services>
 
-        <service id="security.authentication.token_persister" class="%security.authentication.token_persister.class%" >
-            <argument>%security.authentication.token_persister.sessionKey%</argument>
-            <argument type="service" id="session" />
-        </service>
-
-        <service id="security.authentication.provider.openid" class="%security.authentication.provider.openid.class%" >
-           <argument type="service" id="service_container" />
-           <argument>%security.authentication.provider.openid.parameters%</argument>
+        <service id="security.authentication.provider.openid" class="%fp_openid.security.authentication.provider.class%" >
+            <argument type="service" id="fp_openid.consumer" />
+            <argument type="service" id="router" />
+            <argument type="service" id="fp_openid.security.authentication.token_persister" />
+            <argument>%fp_openid.security.authentication.provider.parameters%</argument>
         </service>
 
         <service
             id="security.authentication.listener.openid"
-            class="%security.authentication.listener.openid.class%"
+            class="%fp_openid.security.authentication.listener.class%"
             parent="security.authentication.listener.abstract"
             abstract="true">
         </service>
 
-        <service id="openid.light_open_id" class="%openid.light_open_id.class%">
-            <argument>%openid.light_open_id.trust_root%</argument>
+        <service id="fp_openid.consumer" alias="fp_openid.consumer.light_open_id">
+        </service>
+
+        <service id="fp_openid.consumer.light_open_id" class="%fp_openid.consumer.light_open_id.class%">
+            <argument>%fp_openid.consumer.light_open_id.parameters%</argument>
+        </service>
+
+        <service id="fp_openid.security.authentication.token_persister" class="%fp_openid.security.authentication.token_persister.class%" >
+            <argument>%fp_openid.security.authentication.token_persister.sessionKey%</argument>
+            <argument type="service" id="session" />
         </service>
     </services>
 </container>

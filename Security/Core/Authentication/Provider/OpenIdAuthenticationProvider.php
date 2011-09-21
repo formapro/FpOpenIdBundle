@@ -2,32 +2,35 @@
 namespace Fp\OpenIdBundle\Security\Core\Authentication\Provider;
 
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\NonceExpiredException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister;
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
+use Fp\OpenIdBundle\Consumer\ConsumerInterface;
+
 
 class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 {
-    protected $container;
-	protected $parameters;
+    protected $consumer;
 
-    public function __construct(ContainerInterface $container, array $parameters)
+    protected $router;
+
+    protected $tokenPersister;
+
+    protected $parameters;
+
+    public function __construct(ConsumerInterface $consumer, RouterInterface $router, TokenPersister $tokenPersister, array $parameters)
     {
-        $this->container = $container;
+        $this->consumer = $consumer;
+        $this->router = $router;
+        $this->tokenPersister = $tokenPersister;
+
         $this->parameters = array_merge(array(
-            'routerService' => null,
-            'lightOpenIdService' => null,
-            'tokenPersisterService' => null,
             'return_route' => null,
             'approve_route' => null,
-            'roles' => array(),
-            'openid_required_options' => array(),
-            'openid_optional_options' => array()), $parameters);
+            'roles' => array()), $parameters);
     }
 
     public function authenticate(TokenInterface $token)
@@ -36,79 +39,60 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
             return null;
         }
 
-        return $token->isBeginning() ? $this->start($token) : $this->finish($token);
+        $processState = 'process' . ucfirst($token->getState());
+
+        return $this->$processState($token);
     }
 
     public function supports(TokenInterface $token)
     {
-        return $token instanceof OpenIdToken;
+        if (false == ($token instanceof OpenIdToken)) {
+            return false;
+        }
+
+        return in_array($token->getState(), array('verify', 'complete', 'approved'));
     }
 
-    public function start(OpenIdToken $token)
+    public function processVerify(OpenIdToken $token)
     {
-        $lightOpenId = $this->getLightOpenId();
+        $token->setAuthenticateUrl(
+            $this->consumer->authenticateUrl($token->getIdentifier(), $this->getReturnUrl()));
 
-        $lightOpenId->identity = $token->getOpenIdentifier();
-		$lightOpenId->returnUrl = $this->getRouter()->generate($this->parameters['return_route'], array(), true);
-		$lightOpenId->required = $this->parameters['openid_required_options'];
-		$lightOpenId->optional = $this->parameters['openid_optional_options'];
-
-        $token->setAuthenticateUrl($lightOpenId->authUrl());
-        
         return $token;
     }
 
-    public function finish(OpenIdToken $token)
+    public function processComplete(OpenIdToken $token)
     {
-        if ($token = $this->getTokenPersister()->get()) {
-            if (false == $token->getUser()) {
-                throw new AuthenticationException('Authentication approving was canceled');
-            }
+        $attributes = $this->consumer->complete($token->getResponse(), $this->getReturnUrl());
 
-            return $token;
-        }
-
-        $lightOpenId = $this->getLightOpenId();
-        if (false == $lightOpenId->validate()) {
-            if($lightOpenId->mode == 'cancel') {
-              throw new AuthenticationException('Authentication was canceled');
-            }
-
-           throw new AuthenticationException('Authentication is not valid');
-        }
-        
-        $token = new OpenIdToken($lightOpenId->identity, $this->parameters['roles']);
-        $token->setAttributes($lightOpenId->getAttributes());
+        $token = new OpenIdToken($attributes['identity'], $this->parameters['roles']);
+        $token->setAttributes($attributes);
 
         if ($this->parameters['approve_route']) {
-            $this->getTokenPersister()->set($token);
-            $token->setApproveUrl($this->getRouter()->generate($this->parameters['approve_route'], array(), true));
+            $this->tokenPersister->set($token);
+            $token->setApproveUrl($this->router->generate($this->parameters['approve_route'], array(), true));
         }
 
         return $token;
     }
 
-    /**
-     * @return \Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister
-     */
-    protected function getTokenPersister()
+    public function processApproved(OpenIdToken $token)
     {
-        return $this->container->get($this->parameters['tokenPersisterService']);
+        $token = $this->tokenPersister->get();
+        if (false == $token) {
+            throw new \RuntimeException('The token persister does not contains a token');
+        }
+        if (false == $token->getUser()) {
+            throw new AuthenticationException('Authentication approving was canceled');
+        }
+
+        return $token;
     }
 
-    /**
-     * @return RouterInterface
-     */
-    protected function getRouter()
+    protected function getReturnUrl()
     {
-        return $this->container->get($this->parameters['routerService']);
-    }
+        $route = $this->parameters['return_route'];
 
-    /**
-     * @return \LightOpenID
-     */
-    protected function getLightOpenId()
-    {
-        return $this->container->get($this->parameters['lightOpenIdService']);
+        return $this->router->generate($route, array(), true);
     }
 }

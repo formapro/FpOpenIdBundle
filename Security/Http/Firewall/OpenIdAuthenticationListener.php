@@ -8,32 +8,60 @@ use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
 
 class OpenIdAuthenticationListener extends AbstractAuthenticationListener
 {
-	protected function attemptAuthentication(Request $request)
+    protected function attemptAuthentication(Request $request)
     {
-        $token = false;
-        if ($openIdentifier = $request->get("openid_identifier", false)) {
-            $token = new OpenIdToken($openIdentifier);
-            $token->setBeginning(true);
-        } else if ($openIdentifier = $request->get("openid_op_endpoint", false)) {
-            $token = new OpenIdToken($openIdentifier);
-            $token->setBeginning(false);
-        } elseif ($openIdentifier = $request->get("openid_approved", false)) {
-            $token = new OpenIdToken($openIdentifier);
-            $token->setBeginning(false);
-        }
-
+        $token = $this->attemptDefineToken($request);
         if (false == $token) {
             return null;
         }
 
+        $openIdResponse = $request->query->all();
+        array_walk($openIdResponse, function(&$value, $key) {
+            if (false === strpos($key, 'openid')) {
+                $value = null;
+            }
+        });
+
+        $token->setResponse(array_filter($openIdResponse));
+
         $result = $this->authenticationManager->authenticate($token);
-		if($result instanceof OpenIdToken && $url = $result->getAuthenticateUrl()) {
-	        return $this->httpUtils->createRedirectResponse($request, $url);
+
+        if($result instanceof OpenIdToken && $url = $result->getAuthenticateUrl()) {
+            return $this->httpUtils->createRedirectResponse($request, $url);
         }
         if($result instanceof OpenIdToken && $url = $result->getApproveUrl()) {
-	        return $this->httpUtils->createRedirectResponse($request, $url);
+            return $this->httpUtils->createRedirectResponse($request, $url);
         }
 
-		return $result;
-    }	
+        return $result;
+    }
+
+    /**
+     * 
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * 
+     * @return \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken|null
+     */
+    protected function attemptDefineToken(Request $request)
+    {
+        $token = null;
+        if ($identifier = $request->get("openid_identifier", false)) {
+
+            $token = new OpenIdToken($identifier);
+            $token->setState('verify');
+
+        } else if ($identifier = $request->get("openid_op_endpoint", false)) {
+
+            $token = new OpenIdToken($identifier);
+            $token->setState('complete');
+
+        } elseif ($identifier = $request->get("openid_approved", false)) {
+
+            $token = new OpenIdToken($identifier);
+            $token->setState('approved');
+            
+        }
+
+        return $token;
+    }
 }

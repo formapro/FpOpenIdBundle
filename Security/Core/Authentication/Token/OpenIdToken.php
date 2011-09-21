@@ -5,36 +5,47 @@ use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
 class OpenIdToken extends AbstractToken
 {
-    protected $openIdentifier;
+    protected $identifier;
 
     protected $authenticateUrl;
 
     protected $approveUrl;
 
-    protected $beginning;
+    protected $state;
 
-    public function __construct($openIdentifier, array $roles = array())
+    protected $response = array();
+
+    public function __construct($identifier, array $roles = array())
     {
         parent::__construct($roles);
         parent::setAuthenticated(count($roles) > 0);
 
-        $this->openIdentifier = $openIdentifier;
-        $this->beginning = true;
+        $this->identifier = $identifier;
     }
 
-    public function isBeginning()
+    public function getResponse()
     {
-        return $this->beginning;
+        return $this->response;
     }
 
-    public function setBeginning($boolean)
+    public function setResponse(array $response)
     {
-        $this->beginning = $boolean;
+        $this->response = $response;
     }
 
-    public function getOpenIdentifier()
+    public function setState($state)
     {
-        return $this->openIdentifier;
+        $this->state = $state;
+    }
+
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     public function getAuthenticateUrl()
@@ -75,12 +86,12 @@ class OpenIdToken extends AbstractToken
 
     public function serialize()
     {
-        return serialize(array($this->openIdentifier, parent::serialize()));
+        return serialize(array($this->identifier, parent::serialize()));
     }
 
     public function unserialize($str)
     {
-        list($this->openIdentifier, $parentStr) = unserialize($str);
+        list($this->identifier, $parentStr) = unserialize($str);
         parent::unserialize($parentStr);
     }
 }
