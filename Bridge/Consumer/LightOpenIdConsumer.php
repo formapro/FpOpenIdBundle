@@ -28,7 +28,7 @@ class LightOpenIdConsumer implements ConsumerInterface
         ), $parameters);
     }
 
-    public function authenticateUrl($identifier, $returnUrl, array $parameters = array())
+    public function authenticateUrl($identifier, $returnUrl)
     {
         $lightOpenId = $this->getLightOpenID();
 

@@ -13,7 +13,7 @@ interface ConsumerInterface
      *
      * @return string
      */
-    public function authenticateUrl($identifier, $returnUrl, array $parameters = array());
+    public function authenticateUrl($identifier, $returnUrl);
 
     /**
      * @abstract
