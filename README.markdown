@@ -55,14 +55,12 @@ Internally uses [LightOpenID](http://gitorious.org/lightopenid)
 
             firewalls:
                 secured_area:
-                pattern:              ^/
-                anonymous:            ~
-                logout:
-                    path:             /logout
-                    target:           /
-                openid:
-                    login_path:       /login
-                    check_path:       /login_check
+                    pattern:              ^/
+                    anonymous:            ~
+                    logout:
+                        path:             /logout
+                        target:           /
+                    openid:               true
 
 * Render simple form
 
