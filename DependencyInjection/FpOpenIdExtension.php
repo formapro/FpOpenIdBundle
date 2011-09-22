@@ -19,16 +19,12 @@ class FpOpenIdExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('openid.xml');
 
-        $container->setParameter('fp_openid.security.authentication.provider.parameters', array(
-            'roles' => $configs['provider']['roles'],
-            'return_route' => $configs['provider']['return_route'],
-            'approve_route' => $configs['provider']['approve_route'],
-        ));
+        $container->setParameter('fp_openid.security.authentication.provider.parameters', $configs['provider']);
 
-        $container->setParameter('fp_openid.consumer.light_open_id.parameters', array(
-            'trust_root' => $configs['light_open_id']['trust_root'],
-            'required' => $configs['provider']['options_required'],
-            'optional' => $configs['provider']['options_optional'],
-        ));
+        foreach ($configs['consumers'] as $name => $parameters) {
+            $container->setParameter("fp_openid.consumer.{$name}.parameters", $parameters);
+        }
+
+
     }
 }
