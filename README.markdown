@@ -1,12 +1,20 @@
 # Overview
 
 Integrates OpenId feature to symfony's security layer.
-Internally uses [LightOpenID](http://gitorious.org/lightopenid)
+Supports these 3rd party libraries:
+
+* [LightOpenID](http://gitorious.org/lightopenid)
 
 # Get started
 
 * Setup [LightOpenId](http://gitorious.org/lightopenid)
+
+        git submodule add git://gitorious.org/lightopenid/lightopenid.git /path/to/vendor/LightOpenId
+
 * Setup Bundle
+
+        git submodule add git@github.com:formapro/FpOpenIdBundle.git /path/to/vendor/bundles/Fp/OpenIdBundle
+
 * Configure autioload.php
 
         use Symfony\Component\ClassLoader\UniversalClassLoader;
@@ -14,13 +22,13 @@ Internally uses [LightOpenID](http://gitorious.org/lightopenid)
 
         $universalLoader = new UniversalClassLoader;
         $universalLoader->registerNamespaces(array(
-            'Fp' => '/Path/To/Bundle'
+            'Fp' => '/path/to/vendor/bundles'
         ));
 
         $universalLoader->register();
 
         $mapLoader = new MapClassLoader(array(
-            'LightOpenID' => '/Path/To/LightOpenId'
+            'LightOpenID' => '/path/to/venodr/LightOpenId/openid.php'
         ));
 
         $mapLoader->register();
@@ -41,17 +49,18 @@ Internally uses [LightOpenID](http://gitorious.org/lightopenid)
 
         fp_open_id:
             provider:
-                return_route:     'login_check_route'
-                roles:            [ROLE_USER]
+                return_route:             'login_check_route'
+                roles:                    [ROLE_USER]
 
-           light_open_id:
-                trust_root:       'example.com'
+           consumers:
+                light_open_id:
+                    trust_root:           'example.com'
 
 * Configure security bundle
 
         security:
             factories:
-                -                 /Path/To/Fp/OpenIdBundle/Resources/config/security_factories.xml
+                -                         /path/to/vendor/bundles/Fp/OpenIdBundle/Resources/config/security_factories.xml
 
             firewalls:
                 secured_area:
@@ -66,16 +75,21 @@ Internally uses [LightOpenID](http://gitorious.org/lightopenid)
 
         {% render "FpOpenIdBundle:OpenId:simpleForm" %}
 
+* Try it with:
+
+        https://www.google.com/accounts/o8/id
+
 # Manual
 
 ## Request for additional parameters:
 
-* First you need to add some options:
+* Define options you want to request:
 
         fp_open_id:
-            provider:
-                options_required: [contact/email]
-                options_optional: [namePerson, namePerson/first]
+            consumers:
+                light_open_id
+                    required:             [ contact/email ]
+                    optional:             [ namePerson, namePerson/first ]
 
 * After success registration you can fetch them from the token:
 
@@ -88,27 +102,28 @@ Internally uses [LightOpenID](http://gitorious.org/lightopenid)
 
         fp_open_id:
             provider:
-                approve_route:     'openid_approve_user'
-                options_required: [contact/email]
+                approve_route:            'openid_approve_user'
 
-* Create an action which take care of the job:
+            consumers:
+                light_open_id
+                    required:             [ contact/email ]
+
+* Create an action which do post auth job:
 
         public function approveUserAccount($request)
         {
-            $tokenPersister = $this->get('security.authentication.token_persister');
+            $tokenPersister = $this->get('fp_openid.security.authentication.token_persister');
 
             $token = $tokenPersister->get();
+
             $user = $this->get('user.repository')->findBy(array('email' => $token->getAttribute('contact/email')));
 
+            // IMPORTANT: It is required to set a user to token (UserInterface)
             $newToken = new OpenIdToken($token->getOpenIdentifier(), $user->getRoles());
             $newToken->setUser($user);
 
             $tokenPersister->set($newToken);
 
+            // IMPORTANT: It is required make a redirect to `login_check` with parameter `openid_approved`
             return $this->redirect($this->generateUrl('login_check_route', array('openid_approved' => 1)));
         }
-
-    That's IMPORTANT to now about post auth actions:
-    * It is required to set a user to token (UserInterface)
-    * It is required make a redirect to `login_check` with parameter `openid_approved`
-
