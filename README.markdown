@@ -96,7 +96,7 @@ Supports these 3rd party libraries:
         $token->getAttribute('contact/email');
         $token->getAttribute('namePerson/first');
 
-## Storing to db
+## Post auth action
 
 * Define a route for post auth operations:
 
