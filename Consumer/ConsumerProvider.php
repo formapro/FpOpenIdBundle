@@ -17,6 +17,13 @@ class ConsumerProvider
         $this->defaultConsumer = $consumer;
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     *
+     * @param string $identifier
+     *
+     * @return \Fp\OpenIdBundle\Consumer\ConsumerInterface
+     */
     public function provide($identifier)
     {
         foreach ($this->consumers as $consumer) {
