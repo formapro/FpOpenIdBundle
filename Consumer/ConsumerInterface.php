@@ -24,4 +24,13 @@ interface ConsumerInterface
      * @return array 
      */
     public function complete(array $response, $returnUrl);
+
+    /**
+     * @abstract
+     *
+     * @param string $identifier
+     *
+     * @return boolean
+     */
+    public function supports($identifier);
 }

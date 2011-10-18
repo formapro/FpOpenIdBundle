@@ -13,6 +13,8 @@
         <parameter key="fp_openid.security.authentication.token_persister.class">Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister</parameter>
         <parameter key="fp_openid.security.authentication.token_persister.sessionKey">_fp_openid.security.authentication.token_persister.openid</parameter>
 
+        <parameter key="fp_openid.consumer.provider.class">Fp\OpenIdBundle\Consumer\ConsumerProvider</parameter>
+
         <parameter key="fp_openid.consumer.light_open_id.class">Fp\OpenIdBundle\Bridge\Consumer\LightOpenIdConsumer</parameter>
         <parameter key="fp_openid.consumer.light_open_id.parameters"></parameter>
 
@@ -22,7 +24,7 @@
     <services>
 
         <service id="security.authentication.provider.openid" class="%fp_openid.security.authentication.provider.class%" >
-            <argument type="service" id="fp_openid.consumer" />
+            <argument type="service" id="fp_openid.consumer.provider" />
             <argument type="service" id="router" />
             <argument type="service" id="fp_openid.security.authentication.token_persister" />
             <argument>%fp_openid.security.authentication.provider.parameters%</argument>
@@ -35,7 +37,10 @@
             abstract="true">
         </service>
 
-        <service id="fp_openid.consumer" alias="fp_openid.consumer.light_open_id">
+        <service id="fp_openid.consumer.provider" class="%fp_openid.consumer.provider.class%">
+            <call method="setDefault">
+             <argument type="service" id="fp_openid.consumer.light_open_id" />
+            </call>
         </service>
 
         <service id="fp_openid.consumer.light_open_id" class="%fp_openid.consumer.light_open_id.class%">

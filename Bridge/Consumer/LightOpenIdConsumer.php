@@ -65,4 +65,11 @@ class LightOpenIdConsumer implements ConsumerInterface
 
         return $this->lightOpenID;
     }
+
+    public function supports($identifier)
+    {
+        // should support any kind of openid providers
+        // can be used as default
+        return true;
+    }
 }
