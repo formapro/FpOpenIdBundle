@@ -119,7 +119,7 @@ Supports these 3rd party libraries:
             $user = $this->get('user.repository')->findBy(array('email' => $token->getAttribute('contact/email')));
 
             // IMPORTANT: It is required to set a user to token (UserInterface)
-            $newToken = new OpenIdToken($token->getOpenIdentifier(), $user->getRoles());
+            $newToken = new OpenIdToken($token->getIdentifier(), $user->getRoles());
             $newToken->setUser($user);
 
             $tokenPersister->set($newToken);
