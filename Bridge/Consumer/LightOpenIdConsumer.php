@@ -2,6 +2,7 @@
 
 namespace Fp\OpenIdBundle\Bridge\Consumer;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Fp\OpenIdBundle\Consumer\ConsumerInterface;
