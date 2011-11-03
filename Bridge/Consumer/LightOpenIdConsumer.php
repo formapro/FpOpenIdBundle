@@ -2,6 +2,7 @@
 
 namespace Fp\OpenIdBundle\Bridge\Consumer;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Fp\OpenIdBundle\Consumer\ConsumerInterface;
@@ -55,12 +56,17 @@ class LightOpenIdConsumer implements ConsumerInterface
     }
 
     /**
+     * Instantiate LightOpenID with the defined trust_root or the current host if trust_root is not defined.
      * @return LightOpenID
      */
     protected function getLightOpenID()
     {
         if (false == $this->lightOpenID) {
-            $this->lightOpenID = new $this->lightOpenIDClass($this->parameters['trust_root']);
+            if (! $trustRoot = $this->parameters['trust_root']) {
+                $request = new Request(array(), array(), array(), array(), array(), $_SERVER);
+                $trustRoot = $request->getHost();
+            }
+            $this->lightOpenID = new $this->lightOpenIDClass($trustRoot);
         }
 
         return $this->lightOpenID;
