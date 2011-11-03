@@ -16,7 +16,6 @@
         <parameter key="fp_openid.consumer.provider.class">Fp\OpenIdBundle\Consumer\ConsumerProvider</parameter>
 
         <parameter key="fp_openid.consumer.light_open_id.class">Fp\OpenIdBundle\Bridge\Consumer\LightOpenIdConsumer</parameter>
-        <parameter key="fp_openid.consumer.light_open_id.parameters"></parameter>
 
         <parameter key="openid.view.simple_form">FpOpenIdBundle:OpenId:simple_form.html.twig</parameter>
     </parameters>
@@ -38,13 +37,10 @@
         </service>
 
         <service id="fp_openid.consumer.provider" class="%fp_openid.consumer.provider.class%">
-            <call method="setDefault">
-             <argument type="service" id="fp_openid.consumer.light_open_id" />
-            </call>
         </service>
 
         <service id="fp_openid.consumer.light_open_id" class="%fp_openid.consumer.light_open_id.class%">
-            <argument>%fp_openid.consumer.light_open_id.parameters%</argument>
+            <argument type="collection"></argument>
         </service>
 
         <service id="fp_openid.security.authentication.token_persister" class="%fp_openid.security.authentication.token_persister.class%" >
