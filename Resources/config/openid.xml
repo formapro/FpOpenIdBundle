@@ -18,6 +18,8 @@
         <parameter key="fp_openid.consumer.light_open_id.class">Fp\OpenIdBundle\Bridge\Consumer\LightOpenIdConsumer</parameter>
 
         <parameter key="openid.view.simple_form">FpOpenIdBundle:OpenId:simple_form.html.twig</parameter>
+
+        <parameter key="fp_openid.trust_root_listener.class">Fp\OpenIdBundle\EventListener\TrustRootListener</parameter>
     </parameters>
 
     <services>
@@ -47,5 +49,10 @@
             <argument>%fp_openid.security.authentication.token_persister.sessionKey%</argument>
             <argument type="service" id="session" />
         </service>
+
+        <service id="fp_openid.trust_root_listener" class="%fp_openid.trust_root_listener.class%">
+            <tag name="kernel.event_subscriber"></tag>
+        </service>
+
     </services>
 </container>

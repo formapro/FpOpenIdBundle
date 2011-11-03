@@ -43,7 +43,7 @@ class Configuration implements ConfigurationInterface
                                 ->useAttributeAsKey('name')
                                 ->prototype('scalar')->end()
                             ->end()
-                            ->scalarNode('trust_root')->cannotBeEmpty()->end()
+                            ->scalarNode('trust_root')->defaultValue('from_request')->cannotBeEmpty()->end()
                             ->scalarNode('default')->defaultFalse()->end()
                         ->end()
                     ->end()

@@ -1,19 +1,48 @@
 <?php
 namespace Fp\OpenIdBundle\Security\Http\Firewall;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Http\Session\SessionAuthenticationStrategyInterface;
+use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
 use Symfony\Component\Security\Http\Firewall\AbstractAuthenticationListener;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
+use Fp\OpenIdBundle\Event\AuthenticationEvent;
 
 class OpenIdAuthenticationListener extends AbstractAuthenticationListener
 {
+    /**
+     * @var \Symfony\Component\EventDispatcher\EventDispatcher
+     */
+    protected $dispatcher;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, array $options = array(), AuthenticationSuccessHandlerInterface $successHandler = null, AuthenticationFailureHandlerInterface $failureHandler = null, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
+    {
+        $this->dispatcher = $dispatcher;
+
+        parent::__construct($securityContext, $authenticationManager, $sessionStrategy, $httpUtils, $providerKey, $options, $successHandler, $failureHandler, $logger, $dispatcher);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function attemptAuthentication(Request $request)
     {
         $token = $this->attemptDefineToken($request);
         if (false == $token) {
             return null;
         }
+
+        $this->dispatcher->dispatch('fp_openid.before_authentication', new AuthenticationEvent($request, $token));
 
         $token->setResponse($request->query->all());
 
@@ -30,7 +59,6 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
     }
 
     /**
-     * 
      * @param \Symfony\Component\HttpFoundation\Request $request
      * 
      * @return \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken|null

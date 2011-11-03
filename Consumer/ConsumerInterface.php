@@ -4,6 +4,17 @@ namespace Fp\OpenIdBundle\Consumer;
 interface ConsumerInterface
 {
     /**
+     * This method allows change trustRoot in runtime.
+     *
+     * @abstract
+     *
+     * @param string $trustRoot
+     *
+     * @return void
+     */
+    public function changeTrustRoot($trustRoot);
+
+    /**
      * @abstract
      *
      * @param string $identifier

@@ -28,6 +28,18 @@ class LightOpenIdConsumer implements ConsumerInterface
         ), $parameters);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function changeTrustRoot($trustRoot)
+    {
+        $this->parameters['trust_root'] = $trustRoot;
+        $this->lightOpenID = null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function authenticateUrl($identifier, $returnUrl)
     {
         $lightOpenId = $this->getLightOpenID();
@@ -40,6 +52,9 @@ class LightOpenIdConsumer implements ConsumerInterface
         return $lightOpenId->authUrl();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function complete(array $response, $returnUrl)
     {
         $lightOpenId = $this->getLightOpenID();
@@ -66,6 +81,9 @@ class LightOpenIdConsumer implements ConsumerInterface
         return $this->lightOpenID;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supports($identifier)
     {
         // should support any kind of openid providers

@@ -47,6 +47,12 @@ class FpOpenIdExtension extends Extension
             $consumerArguments[0] = $parameters;
             $consumerDefinition->setArguments($consumerArguments);
 
+            // dynamically set trust root from a request
+            if ('from_request' == $parameters['trust_root']) {
+                $trustRootListenerDefinition = $container->getDefinition('fp_openid.trust_root_listener');
+                $trustRootListenerDefinition->addMethodCall('addConsumer', array(new Reference($serviceKey)));
+            }
+
             // add consumers to provider
             $consumerProviderDefinition = $container->getDefinition('fp_openid.consumer.provider');
             if ($parameters['default']) {
