@@ -51,7 +51,8 @@
         </service>
 
         <service id="fp_openid.trust_root_listener" class="%fp_openid.trust_root_listener.class%">
-            <tag name="kernel.event_subscriber"></tag>
+            <!-- <tag name="kernel.event_subscriber"></tag> -->
+            <tag name="kernel.event_listener" event="fp_openid.before_authentication" method="onOpenidBeforeAuthentication"/>
         </service>
 
     </services>
