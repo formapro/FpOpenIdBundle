@@ -8,12 +8,12 @@ use Symfony\Component\Routing\RouterInterface;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister;
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
-use Fp\OpenIdBundle\Consumer\ConsumerInterface;
+use Fp\OpenIdBundle\Consumer\ConsumerProvider;
 
 
 class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 {
-    protected $consumer;
+    protected $consumerProvider;
 
     protected $router;
 
@@ -21,9 +21,9 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 
     protected $parameters;
 
-    public function __construct(ConsumerInterface $consumer, RouterInterface $router, TokenPersister $tokenPersister, array $parameters)
+    public function __construct(ConsumerProvider $consumerProvider, RouterInterface $router, TokenPersister $tokenPersister, array $parameters)
     {
-        $this->consumer = $consumer;
+        $this->consumerProvider = $consumerProvider;
         $this->router = $router;
         $this->tokenPersister = $tokenPersister;
 
@@ -55,15 +55,19 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 
     public function processVerify(OpenIdToken $token)
     {
+        $consumer = $this->consumerProvider->provide($token->getIdentifier());
+
         $token->setAuthenticateUrl(
-            $this->consumer->authenticateUrl($token->getIdentifier(), $this->getReturnUrl()));
+            $consumer->authenticateUrl($token->getIdentifier(), $this->getReturnUrl()));
 
         return $token;
     }
 
     public function processComplete(OpenIdToken $token)
     {
-        $attributes = $this->consumer->complete($token->getResponse(), $this->getReturnUrl());
+        $consumer = $this->consumerProvider->provide($token->getIdentifier());
+
+        $attributes = $consumer->complete($token->getResponse(), $this->getReturnUrl());
 
         $token = new OpenIdToken($attributes['identity'], $this->parameters['roles']);
         $token->setAttributes($attributes);
