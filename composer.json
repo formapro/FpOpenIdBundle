@@ -1,0 +1,29 @@
+{
+    "name": "fp/openid-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony2 OpenID security extension",
+    "keywords": ["Security", "OpenId", "Authentication"],
+    "homepage": "https://github.com/formapro/FpOpenIdBundle",
+    "version": "1.1.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kotlyar Maksim",
+            "email": "kotlyar.maksim@gmail.com"
+        },
+        {
+            "name": "Community",
+            "homepage": "https://github.com/formapro/FpOpenIdBundle/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "fp/lightopenid": ">=1.0.0",
+        "symfony/framework-bundle": "2.*",
+        "symfony/security-bundle": "2.*"
+    },
+    "autoload": {
+        "psr-0": { "Fp\\OpenIdBundle": "" }
+    },
+    "target-dir": "Fp/OpenIdBundle"
+}
