@@ -1,0 +1,8 @@
+<?php
+
+include_once __DIR__ . '/../vendor/.composer/autoload.php';
+
+$mapLoader = new \Symfony\Component\ClassLoader\MapClassLoader(array(
+    'LightOpenID' => __DIR__ . '/../vendor/fp/lightopenid/openid.php'
+));
+$mapLoader->register();
