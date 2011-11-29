@@ -1,0 +1,33 @@
+fp_open_id:
+    provider:
+        return_route:                                         'login_check'
+
+    consumers:
+        light_open_id:
+
+security:
+    factories:
+        -                                                 "%kernel.root_dir%/../../Resources/config/security_factories.xml"
+
+    firewalls:
+        secured_area:
+            pattern:                                      ^/
+            anonymous:                                    ~
+            openid:
+                 login_path:                               /login
+                 check_path:                               /login_check
+
+    providers:
+        in_memory:
+            users:
+                foo: { password: foo }
+
+framework:
+    secret:                                               sdkfj
+    charset:                                              UTF-8
+    test:                                                 true
+    router:                                               { resource: "%kernel.root_dir%/config/routing.yml" }
+    templating:
+        engines:                                          [ 'php' ]
+    session:
+        storage_id:                                       session.storage.filesystem
