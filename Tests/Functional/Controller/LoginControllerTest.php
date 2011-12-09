@@ -5,6 +5,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class LoginControllerTest extends WebTestCase
 {
+    /**
+     * @test
+     */
     public function shouldRedirectToOpenIdProvider()
     {
         // workaround for lightopenid lib.
