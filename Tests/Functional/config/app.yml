@@ -1,6 +1,8 @@
 fp_open_id:
     provider:
         return_route:                                         'login_check'
+        roles:
+            -                                                 user
 
     consumers:
         light_open_id:
