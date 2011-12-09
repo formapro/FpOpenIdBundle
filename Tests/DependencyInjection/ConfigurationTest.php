@@ -14,6 +14,7 @@ class ConfigurationTest extends  \PHPUnit_Framework_TestCase
         $this->fullConfigs = array('fp_open_id' => array(
             'provider' => array(
                 'return_route' => 'http://foo.bar/return',
+                'cancel_route' => 'http://foo.bar/cancel',
                 'approve_route' => 'http://foo.bar/approve',
                 'roles' => array(
                     'user',

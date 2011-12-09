@@ -20,6 +20,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('provider')->isRequired()->cannotBeEmpty()
                     ->children()
                         ->scalarNode('return_route')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('cancel_route')->isRequired()->cannotBeEmpty()->end()
                         ->scalarNode('approve_route')->defaultNull()->end()
                         ->arrayNode('roles')
                             ->isRequired()
