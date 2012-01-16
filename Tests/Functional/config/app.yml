@@ -1,9 +1,16 @@
+services:
+    fp_openid.consumer.light_open_id:
+        class:                                            Fp\OpenIdBundle\Tests\Functional\TestConsumer
+
 fp_open_id:
     provider:
-        return_route:                                         'login_check'
+        return_route:                                     'login_check'
+        approve_route:                                    'openid_approve'
+        roles:
+            -                                             user
 
     consumers:
-        light_open_id:
+        light_open_id:                                    true
 
 security:
     factories:
@@ -12,7 +19,7 @@ security:
     firewalls:
         secured_area:
             pattern:                                      ^/
-            anonymous:                                    ~
+            anonymous:                                    true
             openid:
                  login_path:                               /login
                  check_path:                               /login_check

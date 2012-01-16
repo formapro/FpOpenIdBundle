@@ -5,12 +5,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class LoginControllerTest extends WebTestCase
 {
+    /**
+     * @test
+     */
     public function shouldRedirectToOpenIdProvider()
     {
-        // workaround for lightopenid lib.
-        $_SERVER['REQUEST_URI'] = 'test.example.com';
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-
         $client = static::createClient();
 
         $crawler = $client->request('GET', '/login');
@@ -18,12 +17,12 @@ class LoginControllerTest extends WebTestCase
         $form = $crawler
             ->selectButton('Sign In')
             ->form(array(
-                'openid_identifier' => 'https://www.google.com/accounts/o8/id'
+                'openid_identifier' => 'an_id'
             )
         );
 
         $this->assertContains(
-            'Redirecting to https://www.google.com/accounts/o8/ud?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup',
+            'Redirecting to http://openid.provider.com?id=an_id&trust_root=localhost&return_url=http://localhost/login_check',
             $client->submit($form)->text()
         );
     }
