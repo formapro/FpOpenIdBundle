@@ -50,7 +50,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
             return false;
         }
 
-        return in_array($token->getState(), array('verify', 'complete', 'approved'));
+        return in_array($token->getState(), array('verify', 'complete', 'approved', 'cancel'));
     }
 
     public function processVerify(OpenIdToken $token)
@@ -80,6 +80,13 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
         return $token;
     }
 
+    public function processCancel(OpenIdToken $token)
+    {
+        $token->setCancelUrl($this->getCancelUrl());
+
+        return $token;
+    }
+
     public function processApproved(OpenIdToken $token)
     {
         $token = $this->tokenPersister->get();
@@ -96,6 +103,13 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
     protected function getReturnUrl()
     {
         $route = $this->parameters['return_route'];
+
+        return $this->router->generate($route, array(), true);
+    }
+
+    protected function getCancelUrl()
+    {
+        $route = $this->parameters['cancel_route'];
 
         return $this->router->generate($route, array(), true);
     }

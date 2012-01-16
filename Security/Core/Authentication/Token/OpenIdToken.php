@@ -11,6 +11,8 @@ class OpenIdToken extends AbstractToken
 
     protected $approveUrl;
 
+    protected $cancelUrl;
+
     protected $state;
 
     protected $response = array();
@@ -66,6 +68,16 @@ class OpenIdToken extends AbstractToken
     public function setApproveUrl($url)
     {
         $this->approveUrl = $url;
+    }
+
+    public function getCancelUrl()
+    {
+        return $this->cancelUrl;
+    }
+
+    public function setCancelUrl($url)
+    {
+        $this->cancelUrl = $url;
     }
 
     /**

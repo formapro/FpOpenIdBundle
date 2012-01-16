@@ -54,6 +54,9 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
         if($result instanceof OpenIdToken && $url = $result->getApproveUrl()) {
             return $this->httpUtils->createRedirectResponse($request, $url);
         }
+        if($result instanceof OpenIdToken && $url = $result->getCancelUrl()) {
+            return $this->httpUtils->createRedirectResponse($request, $url);
+        }
 
         return $result;
     }
@@ -66,16 +69,15 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
     protected function attemptDefineToken(Request $request)
     {
         $token = null;
-        if ($identifier = $request->get("openid_identifier", false)) {
-
+        if ($request->get("openid_mode", false) && 'cancel' == $request->get("openid_mode")) {
+            $token = new OpenIdToken('canceled');
+            $token->setState('cancel');
+        } else if ($identifier = $request->get("openid_identifier", false)) {
             $token = new OpenIdToken($identifier);
             $token->setState('verify');
-
         } else if ($identifier = $request->get("openid_op_endpoint", false)) {
-
             $token = new OpenIdToken($identifier);
             $token->setState('complete');
-
         } elseif ($identifier = $request->get("openid_approved", false)) {
 
             $token = new OpenIdToken($identifier);
