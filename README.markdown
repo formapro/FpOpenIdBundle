@@ -71,9 +71,9 @@ Supports these 3rd party libraries:
                         target:           /
                     openid:               true
 
-* Render simple form
+* Render login form
 
-        {% render "FpOpenIdBundle:OpenId:simpleForm" %}
+        {% render "FpOpenIdBundle:OpenId:loginForm" %}
 
 * Try it with:
 
@@ -95,6 +95,15 @@ Supports these 3rd party libraries:
 
         $token->getAttribute('contact/email');
         $token->getAttribute('namePerson/first');
+
+## Set a fixed OpenID identity (e.g. Google Apps domain)
+
+        fp_open_id:
+            consumers:
+                light_open_id
+                    identifier:           'http://example.com/openid'
+                    required:             [ contact/email ]
+                    optional:             [ namePerson, namePerson/first ]
 
 ## Post auth action
 

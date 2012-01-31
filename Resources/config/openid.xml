@@ -17,7 +17,7 @@
 
         <parameter key="fp_openid.consumer.light_open_id.class">Fp\OpenIdBundle\Bridge\Consumer\LightOpenIdConsumer</parameter>
 
-        <parameter key="openid.view.simple_form">FpOpenIdBundle:OpenId:simple_form.html.twig</parameter>
+        <parameter key="openid.view.login_form">FpOpenIdBundle:OpenId:login_form.html.twig</parameter>
 
         <parameter key="fp_openid.trust_root_listener.class">Fp\OpenIdBundle\EventListener\TrustRootListener</parameter>
     </parameters>

@@ -17,7 +17,7 @@ class OpenIdToken extends AbstractToken
 
     protected $response = array();
 
-    public function __construct($identifier, array $roles = array())
+    public function __construct($identifier = null, array $roles = array())
     {
         parent::__construct($roles);
         parent::setAuthenticated(count($roles) > 0);
@@ -64,7 +64,7 @@ class OpenIdToken extends AbstractToken
     {
         return $this->approveUrl;
     }
-    
+
     public function setApproveUrl($url)
     {
         $this->approveUrl = $url;

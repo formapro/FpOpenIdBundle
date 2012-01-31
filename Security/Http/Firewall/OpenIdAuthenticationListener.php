@@ -63,26 +63,27 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
-     * 
+     *
      * @return \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken|null
      */
     protected function attemptDefineToken(Request $request)
     {
         $token = null;
-        if ($request->get("openid_mode", false) && 'cancel' == $request->get("openid_mode")) {
+        if ($request->get('openid_mode', false) && 'cancel' == $request->get('openid_mode')) {
             $token = new OpenIdToken('canceled');
             $token->setState('cancel');
-        } else if ($identifier = $request->get("openid_identifier", false)) {
+        } else if ($request->get('openid_mode', false) && 'verify' == $request->get('openid_mode')) {
+            $token = new OpenIdToken();
+            $token->setState('verify');
+        } else if ($identifier = $request->get('openid_identifier', false)) {
             $token = new OpenIdToken($identifier);
             $token->setState('verify');
-        } else if ($identifier = $request->get("openid_op_endpoint", false)) {
+        } else if ($identifier = $request->get('openid_op_endpoint', false)) {
             $token = new OpenIdToken($identifier);
             $token->setState('complete');
-        } elseif ($identifier = $request->get("openid_approved", false)) {
-
+        } else if ($identifier = $request->get('openid_approved', false)) {
             $token = new OpenIdToken($identifier);
             $token->setState('approved');
-
         }
 
         return $token;

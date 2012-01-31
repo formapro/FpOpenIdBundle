@@ -7,9 +7,15 @@ class OpenIdController extends ContainerAware
 {
     public function simpleFormAction()
     {
+        $consumer = $this->container->get('fp_openid.consumer.provider')->provide(null);
         $templating = $this->container->get('templating');
-        $view = $this->container->getParameter('openid.view.simple_form');
+        $view = $this->container->getParameter('openid.view.login_form');
 
-        return $templating->renderResponse($view, array());
+        return $templating->renderResponse(
+            $view,
+            array(
+                'identifier_configured' => $consumer->hasConfiguredIdentifier()
+            )
+        );
     }
 }

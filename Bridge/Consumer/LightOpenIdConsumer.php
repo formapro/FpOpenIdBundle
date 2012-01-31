@@ -5,6 +5,7 @@ namespace Fp\OpenIdBundle\Bridge\Consumer;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Fp\OpenIdBundle\Consumer\ConsumerInterface;
+use LightOpenId;
 
 class LightOpenIdConsumer implements ConsumerInterface
 {
@@ -29,6 +30,16 @@ class LightOpenIdConsumer implements ConsumerInterface
     }
 
     /**
+     * Check if a fixed identifier is set in config
+     *
+     * @return bool
+     */
+    public function hasConfiguredIdentifier()
+    {
+        return ($this->parameters['identifier'] !== null);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function changeTrustRoot($trustRoot)
@@ -44,9 +55,14 @@ class LightOpenIdConsumer implements ConsumerInterface
     {
         $lightOpenId = $this->getLightOpenID();
 
-        $lightOpenId->identity = $identifier;
-		$lightOpenId->returnUrl = $returnUrl;
-		$lightOpenId->required = $this->parameters['required'];
+        if ($this->hasConfiguredIdentifier()) {
+            $lightOpenId->identity = $this->parameters['identifier'];
+        } else if ($identifier !== null) {
+            $lightOpenId->identity = $identifier;
+        }
+
+        $lightOpenId->returnUrl = $returnUrl;
+        $lightOpenId->required = $this->parameters['required'];
         $lightOpenId->optional = $this->parameters['optional'];
 
         return $lightOpenId->authUrl();

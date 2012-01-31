@@ -7,7 +7,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * 
+     *
      *  {@inheritDoc}
      */
     public function getConfigTreeBuilder()
@@ -46,6 +46,7 @@ class Configuration implements ConfigurationInterface
                                 ->useAttributeAsKey('name')
                                 ->prototype('scalar')->end()
                             ->end()
+                            ->scalarNode('identifier')->defaultNull()->end()
                             ->scalarNode('trust_root')->defaultValue('from_request')->cannotBeEmpty()->end()
                             ->scalarNode('default')->defaultFalse()->end()
                         ->end()
