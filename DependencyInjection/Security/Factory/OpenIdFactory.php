@@ -3,21 +3,20 @@ namespace Fp\OpenIdBundle\DependencyInjection\Security\Factory;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
 
 class OpenIdFactory extends AbstractFactory
 {
     /**
-     *
      * {@inheritDoc}
      */
     public function getPosition()
     {
-        return 'form';
+        return 'pre_auth';
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public function getKey()
@@ -26,7 +25,6 @@ class OpenIdFactory extends AbstractFactory
     }
 
     /**
-     *
      * {@inheritDoc}
      */
     protected function getListenerId()
@@ -40,15 +38,12 @@ class OpenIdFactory extends AbstractFactory
      */
 	protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
-		return 'security.authentication.provider.openid';
-	}
+        $providerId = 'security.authentication.provider.openid.'.$id;
+        $container
+            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.openid'))
+            ->replaceArgument(3, new Reference($userProviderId))
+        ;
 
-    /**
-     *
-     * {@inheritDoc}
-     */
-	protected function createEntryPoint($container, $id, $config, $defaultEntryPoint)
-    {
-        return $defaultEntryPoint;
-    }
+        return $providerId;
+	}
 }
