@@ -7,6 +7,8 @@ Supports these 3rd party libraries:
 
 # Get started
 
+**The master branch does not supports symfony 2.0 please use branch [1.0](https://github.com/formapro/FpOpenIdBundle/tree/1.0).**
+
 * Setup [LightOpenId](http://gitorious.org/lightopenid)
 
         git submodule add git://gitorious.org/lightopenid/lightopenid.git /path/to/vendor/LightOpenId
