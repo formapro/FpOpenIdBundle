@@ -5,6 +5,7 @@ use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProvid
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister;
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
@@ -19,13 +20,21 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 
     protected $tokenPersister;
 
+    protected $userProvider;
+
     protected $parameters;
 
-    public function __construct(ConsumerProvider $consumerProvider, RouterInterface $router, TokenPersister $tokenPersister, array $parameters)
-    {
+    public function __construct(
+        ConsumerProvider $consumerProvider,
+        RouterInterface $router,
+        TokenPersister $tokenPersister,
+        UserProviderInterface $userProvider,
+        array $parameters
+    ) {
         $this->consumerProvider = $consumerProvider;
         $this->router = $router;
         $this->tokenPersister = $tokenPersister;
+        $this->userProvider = $userProvider;
 
         $this->parameters = array_merge(array(
             'return_route' => null,
@@ -89,6 +98,8 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
         if (false == $token->getUser()) {
             throw new AuthenticationException('Authentication approving was canceled');
         }
+
+        $token->setUser($this->userProvider->refreshUser($token->getUser()));
 
         return $token;
     }

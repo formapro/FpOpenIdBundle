@@ -24,10 +24,11 @@
 
     <services>
 
-        <service id="security.authentication.provider.openid" class="%fp_openid.security.authentication.provider.class%" >
+        <service id="security.authentication.provider.openid" class="%fp_openid.security.authentication.provider.class%" public="false">
             <argument type="service" id="fp_openid.consumer.provider" />
             <argument type="service" id="router" />
             <argument type="service" id="fp_openid.security.authentication.token_persister" />
+            <argument /> <!-- user provider -->
             <argument>%fp_openid.security.authentication.provider.parameters%</argument>
         </service>
 
@@ -35,7 +36,9 @@
             id="security.authentication.listener.openid"
             class="%fp_openid.security.authentication.listener.class%"
             parent="security.authentication.listener.abstract"
-            abstract="true">
+            public="false"
+            abstract="true"
+        >
         </service>
 
         <service id="fp_openid.consumer.provider" class="%fp_openid.consumer.provider.class%">
