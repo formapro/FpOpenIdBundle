@@ -23,6 +23,7 @@
     "repositories": [
         {
             "type": "package",
+            "packagist": false,
             "package": {
                 "name": "lightopenid/lightopenid",
                 "version": "1.0.0",
