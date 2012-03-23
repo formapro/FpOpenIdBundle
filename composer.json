@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "lightopenid/lightopenid": "dev-master",
+        "lightopenid/lightopenid": "1.0.0",
         "symfony/symfony": "2.1.*"
     },
     "repositories": {
@@ -25,7 +25,7 @@
             "type": "package",
             "package": {
                 "name": "lightopenid/lightopenid",
-                "version": "dev-master",
+                "version": "1.0.0",
                 "source": {
                     "url": "git://gitorious.org/lightopenid/lightopenid.git",
                     "type": "git",
