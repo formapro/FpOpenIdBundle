@@ -29,11 +29,6 @@
                 "dist": {
                     "url": "http://gitorious.org/lightopenid/lightopenid/archive-tarball/master",
                     "type": "tar.gz"
-                },
-                "source": {
-                    "url": "git://gitorious.org/lightopenid/lightopenid.git",
-                    "type": "git",
-                    "reference": "master"
                 }
             }
         }
