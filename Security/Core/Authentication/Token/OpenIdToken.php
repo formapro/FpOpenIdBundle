@@ -2,82 +2,34 @@
 namespace Fp\OpenIdBundle\Security\Core\Authentication\Token;
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
+use Symfony\Component\HttpFoundation\Response;
 
 class OpenIdToken extends AbstractToken
 {
-    protected $identifier;
+    /**
+     * @var string
+     */
+    protected $identity;
 
-    protected $authenticateUrl;
-
-    protected $approveUrl;
-
-    protected $cancelUrl;
-
-    protected $state;
-
-    protected $response = array();
-
-    public function __construct($identifier, array $roles = array())
+    /**
+     * @param string
+     * @param array $attributes
+     * @param array $roles
+     */
+    public function __construct($identity, array $roles = array())
     {
         parent::__construct($roles);
-        parent::setAuthenticated(count($roles) > 0);
+        parent::setAuthenticated(count($this->getRoles()) > 0);
 
-        $this->identifier = $identifier;
+        $this->identity = $identity;
     }
 
-    public function getResponse()
+    /**
+     * @return string
+     */
+    public function getIdentity()
     {
-        return $this->response;
-    }
-
-    public function setResponse(array $response)
-    {
-        $this->response = $response;
-    }
-
-    public function setState($state)
-    {
-        $this->state = $state;
-    }
-
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    public function getAuthenticateUrl()
-    {
-        return $this->authenticateUrl;
-    }
-
-    public function setAuthenticateUrl($url)
-    {
-        $this->authenticateUrl = $url;
-    }
-
-    public function getApproveUrl()
-    {
-        return $this->approveUrl;
-    }
-    
-    public function setApproveUrl($url)
-    {
-        $this->approveUrl = $url;
-    }
-
-    public function getCancelUrl()
-    {
-        return $this->cancelUrl;
-    }
-
-    public function setCancelUrl($url)
-    {
-        $this->cancelUrl = $url;
+        return $this->identity;
     }
 
     /**
@@ -92,18 +44,29 @@ class OpenIdToken extends AbstractToken
         parent::setAuthenticated(false);
     }
 
+    /**
+     * @return void
+     */
     public function getCredentials()
     {
+        return '';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function serialize()
     {
-        return serialize(array($this->identifier, parent::serialize()));
+        return serialize(array($this->identity, parent::serialize()));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function unserialize($str)
     {
-        list($this->identifier, $parentStr) = unserialize($str);
+        list($this->identity, $parentStr) = unserialize($str);
+
         parent::unserialize($parentStr);
     }
 }
