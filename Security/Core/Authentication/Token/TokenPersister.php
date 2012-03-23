@@ -1,7 +1,7 @@
 <?php
 namespace Fp\OpenIdBundle\Security\Core\Authentication\Token;
 
-use Symfony\Component\HttpFoundation\Session;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
 
