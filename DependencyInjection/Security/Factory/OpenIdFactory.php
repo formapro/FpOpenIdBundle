@@ -83,4 +83,21 @@ class OpenIdFactory extends AbstractFactory
 
         return $providerId;
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createEntryPoint($container, $id, $config, $defaultEntryPoint)
+    {
+        $entryPointId = 'security.authentication.form_entry_point.'.$id;
+
+        $container
+            ->setDefinition($entryPointId, new DefinitionDecorator('security.authentication.form_entry_point'))
+            ->addArgument(new Reference('security.http_utils'))
+            ->addArgument($config['login_path'])
+            ->addArgument($config['use_forward'])
+        ;
+
+        return $entryPointId;
+    }
 }
