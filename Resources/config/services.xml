@@ -14,8 +14,12 @@
 
     <services>
 
-        <service id="security.authentication.provider.fp_openid" class="%security.authentication.provider.fp_openid.class%" public="false">
-            <argument type="collection" /> <!-- roles -->
+        <service
+            id="security.authentication.provider.fp_openid"
+            class="%security.authentication.provider.fp_openid.class%"
+            public="false"
+            abstract="true"
+        >
         </service>
 
         <service

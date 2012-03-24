@@ -35,10 +35,10 @@ class LightOpenIdClient extends AbstractClient
     {
         $lightOpenId = new $this->lightOpenIDClass($this->guessTrustRoot($request));
 
-        $lightOpenId->identity = $request->get('openid_identifier');
-		$lightOpenId->returnUrl = $request->getUri();
-        $lightOpenId->required = $request->attributes->get('openid_required', array());
-        $lightOpenId->optional = $request->attributes->get('openid_optional', array());
+        $lightOpenId->identity = $this->guessIdentifier($request);
+        $lightOpenId->returnUrl = $this->guessReturnUrl($request);
+        $lightOpenId->required = $this->guessRequiredParameters($request);
+        $lightOpenId->optional = $this->guessOptionalParameters($request);
 
         return new RedirectResponse($lightOpenId->authUrl());
     }
@@ -62,6 +62,8 @@ class LightOpenIdClient extends AbstractClient
         }
 
         $token = new OpenIdToken($lightOpenId->identity);
+        $token->setAuthenticated(true);
+        $token->setUser($this->guessUser($lightOpenId->identity, $lightOpenId->getAttributes()));
         $token->setAttributes($lightOpenId->getAttributes());
 
         return $token;

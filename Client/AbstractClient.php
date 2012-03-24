@@ -80,4 +80,72 @@ abstract class AbstractClient implements ClientInterface
     {
         return $request->attributes->get('openid_trust_root', $request->getHttpHost());
     }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return string
+     */
+    protected function guessReturnUrl(Request $request)
+    {
+        return $request->getUri();
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return string
+     */
+    protected function guessIdentifier(Request $request)
+    {
+        return $request->get('openid_identifier');
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return string
+     */
+    protected function guessRequiredParameters(Request $request)
+    {
+        return $request->get('openid_required_parameters', array());
+    }
+
+    /**
+    * @param \Symfony\Component\HttpFoundation\Request $request
+    *
+    * @return string
+    */
+    protected function guessOptionalParameters(Request $request)
+    {
+        return $request->get('openid_optional_parameters', array());
+    }
+
+    /**
+     * @param string $identity
+     * @param array $attributes
+     */
+    protected function guessUser($identity, array $attributes = array())
+    {
+        $attributes = array_merge(array(
+            'contact/email' => null,
+            'namePerson/first' => null,
+            'namePerson/last' => null,
+        ), $attributes);
+
+        $username = '';
+        if ($attributes['contact/email']) {
+            $username = $attributes['contact/email'];
+        } else if ($attributes['namePerson/first']) {
+            $username = $attributes['namePerson/first'];
+
+            if ($attributes['namePerson/last']) {
+                $username .= " {$attributes['namePerson/last']}";
+            }
+        }
+
+        $provider = parse_url($identity, PHP_URL_HOST);
+
+        return $username . ' by ' . $provider;
+    }
 }

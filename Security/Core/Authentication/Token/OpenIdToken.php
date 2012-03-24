@@ -19,7 +19,8 @@ class OpenIdToken extends AbstractToken
     public function __construct($identity, array $roles = array())
     {
         parent::__construct($roles);
-        parent::setAuthenticated(count($this->getRoles()) > 0);
+
+        $this->setAuthenticated(count($this->getRoles()) > 0);
 
         $this->identity = $identity;
     }
@@ -30,18 +31,6 @@ class OpenIdToken extends AbstractToken
     public function getIdentity()
     {
         return $this->identity;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAuthenticated($isAuthenticated)
-    {
-        if ($isAuthenticated) {
-            throw new \LogicException('Cannot set this token to trusted after instantiation.');
-        }
-
-        parent::setAuthenticated(false);
     }
 
     /**

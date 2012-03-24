@@ -11,63 +11,119 @@ Supports these 3rd party libraries:
 
 * Setup [LightOpenId](http://gitorious.org/lightopenid)
 
-        git submodule add git://gitorious.org/lightopenid/lightopenid.git /path/to/vendor/LightOpenId
+```
+git submodule add git://gitorious.org/lightopenid/lightopenid.git /path/to/vendor/LightOpenId
+```
 
 * Setup Bundle
 
-        git submodule add git@github.com:formapro/FpOpenIdBundle.git /path/to/vendor/bundles/Fp/OpenIdBundle
+```
+git submodule add git@github.com:formapro/FpOpenIdBundle.git /path/to/vendor/bundles/Fp/OpenIdBundle
+```
 
 * Configure autioload.php
 
-        use Symfony\Component\ClassLoader\UniversalClassLoader;
-        use Symfony\Component\ClassLoader\MapClassLoader;
+```php
+<?php
 
-        $universalLoader = new UniversalClassLoader;
-        $universalLoader->registerNamespaces(array(
-            'Fp' => '/path/to/vendor/bundles'
-        ));
+use Symfony\Component\ClassLoader\UniversalClassLoader;
+use Symfony\Component\ClassLoader\MapClassLoader;
 
-        $universalLoader->register();
+$universalLoader = new UniversalClassLoader;
+$universalLoader->registerNamespaces(array(
+    'Fp' => '/path/to/vendor/bundles'
+));
 
-        $mapLoader = new MapClassLoader(array(
-            'LightOpenID' => '/path/to/venodr/LightOpenId/openid.php'
-        ));
+$universalLoader->register();
 
-        $mapLoader->register();
+$mapLoader = new MapClassLoader(array(
+    'LightOpenID' => '/path/to/venodr/LightOpenId/openid.php'
+));
+
+$mapLoader->register();
+```
 
 * Configure AppKernel.php
 
-        class AppKernel extends Kernel
-        {
-            public function registerBundles()
-            {
-                $bundles = array(
-                    new Fp\OpenIdBundle\FpOpenIdBundle()
-                );
-            }
-        }
+```php
+<?php
 
-* Configure security bundle
+class AppKernel extends Kernel
+{
+    public function registerBundles()
+    {
+        $bundles = array(
+            new Fp\OpenIdBundle\FpOpenIdBundle()
+        );
+    }
+}
+```
 
-            firewalls:
-                secured_area:
-                    pattern:              ^/
-                    anonymous:            ~
-                    logout:
-                        path:             /logout
-                        target:           /
-                    fp_openid:
-                        client:                         fp_openid.client.default
-                        roles:                          [ ROLE_USER ]
-                        check_path:                     /login_check
-                        login_path:                     /login',
-                        always_use_default_target_path: false
-                        default_target_path:            /
-                        target_path_parameter:          _target_path
-                        use_referer:                    false
-                        failure_path:                   null
-                        failure_forward:                false
+* Full openid firewall configuration
 
-* Try it with:
+```yml
 
-        https://www.google.com/accounts/o8/id
+firewalls:
+    secured_area:
+        pattern:              ^/
+        anonymous:            ~
+        logout:
+            path:             /logout
+            target:           /
+        fp_openid:
+            client:                         fp_openid.client.default
+            required_parameters:
+                - contact/email
+                - namePerson/first
+            optional_parameters:
+                - namePerson/last
+            required_parameters:
+            check_path:                     /login_check
+            login_path:                     /login',
+            always_use_default_target_path: false
+            default_target_path:            /
+            target_path_parameter:          _target_path
+            use_referer:                    false
+            failure_path:                   null
+            failure_forward:                false
+
+```
+
+* Try it with google:
+
+```
+https://www.google.com/accounts/o8/id
+```
+
+* Getting user information from openid provider:
+
+**Pay attention to that fact that an openid provider is not required to return any data, you can get nothing even if you set it required**
+
+Request parameters:
+
+```yml
+
+firewalls:
+    secured_area:
+        fp_openid:
+            required_parameters:
+                - contact/email
+                - namePerson/first
+            optional_parameters:
+                - namePerson/last
+```
+
+Get them from token:
+
+```php
+<?php
+
+/**
+ * @var $securityContext \Symfony\Component\Security\Core\SecurityContextInterface
+ */
+$attributes = $securityContext->getToken()->getAttributes();
+
+if (isset($attributes['contact/email'])) {
+    echo $attributes['contact/email'];
+}
+```

@@ -19,6 +19,11 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
 {
     public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, array $options = array(), AuthenticationSuccessHandlerInterface $successHandler = null, AuthenticationFailureHandlerInterface $failureHandler = null, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
     {
+        $options = array_merge(array(
+            'required_parameters' => array(),
+            'optional_parameters' => array(),
+        ), $options);
+
         parent::__construct($securityContext, $authenticationManager, $sessionStrategy, $httpUtils,$providerKey, $options, $successHandler, $failureHandler, $logger, $dispatcher);
     }
 
