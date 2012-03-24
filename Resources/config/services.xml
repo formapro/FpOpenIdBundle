@@ -6,8 +6,8 @@
 
     <parameters>
         <parameter key="security.authentication.provider.fp_openid.class">Fp\OpenIdBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider</parameter>
-
         <parameter key="security.authentication.listener.fp_openid.class">Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener</parameter>
+        <parameter key="security.access.fp_openid_authenticated_voter.class">Fp\OpenIdBundle\Security\Core\Authorization\Voter\OpenIdAuthenticatedVoter</parameter>
 
         <parameter key="fp_openid.client.light_open_id.class">Fp\OpenIdBundle\Bridge\Client\LightOpenIdClient</parameter>
     </parameters>
@@ -29,6 +29,14 @@
             public="false"
             abstract="true"
         >
+        </service>
+
+        <service
+            id="security.access.fp_openid_authenticated_voter"
+            class="%security.access.fp_openid_authenticated_voter.class%"
+            public="false"
+        >
+            <tag name="security.voter" />
         </service>
 
         <service id="fp_openid.client.light_open_id" class="%fp_openid.client.light_open_id.class%"></service>

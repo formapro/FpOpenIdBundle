@@ -127,3 +127,10 @@ if (isset($attributes['contact/email'])) {
     echo $attributes['contact/email'];
 }
 ```
+
+* Secure pages only for openid logged in users:
+
+```yml
+    access_control:
+        - { path: ^/demo/secured/openid, role: IS_AUTHENTICATED_OPENID }
+```
