@@ -11,29 +11,12 @@ use Fp\OpenIdBundle\Security\Core\Exception\OpenIdAuthenticationValidationFailed
 
 class LightOpenIdClient extends AbstractClient
 {
-    protected $lightOpenIDClass;
-
-    /**
-     * @var \LightOpenID
-     */
-    protected $lightOpenID;
-
-    /**
-     * @param string $lightOpenIDClass
-     *
-     * @return null
-     */
-    public function __construct($lightOpenIDClass = 'LightOpenID')
-    {
-        $this->lightOpenIDClass = $lightOpenIDClass;
-    }
-
     /**
      * {@inheritdoc}
      */
     protected function verify(Request $request)
     {
-        $lightOpenId = new $this->lightOpenIDClass($this->guessTrustRoot($request));
+        $lightOpenId = $this->createLightOpenID($this->guessTrustRoot($request));
 
         $lightOpenId->identity = $this->guessIdentifier($request);
         $lightOpenId->returnUrl = $this->guessReturnUrl($request);
@@ -48,7 +31,7 @@ class LightOpenIdClient extends AbstractClient
      */
     protected function complete(Request $request)
     {
-        $lightOpenId = new $this->lightOpenIDClass($this->guessTrustRoot($request));
+        $lightOpenId = $this->createLightOpenID($this->guessTrustRoot($request));
 
         if (false == $lightOpenId->validate()) {
             if($lightOpenId->mode == 'cancel') {
@@ -67,5 +50,15 @@ class LightOpenIdClient extends AbstractClient
         $token->setAttributes($lightOpenId->getAttributes());
 
         return $token;
+    }
+
+    /**
+     * @param string $trustRoot
+     *
+     * @return \LightOpenID
+     */
+    protected function createLightOpenID($trustRoot)
+    {
+        return new \LightOpenID($trustRoot);
     }
 }
