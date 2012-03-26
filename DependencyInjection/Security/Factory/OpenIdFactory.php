@@ -1,6 +1,7 @@
 <?php
 namespace Fp\OpenIdBundle\DependencyInjection\Security\Factory;
 
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
@@ -13,7 +14,7 @@ class OpenIdFactory extends AbstractFactory
      */
     public function getPosition()
     {
-        return 'pre_auth';
+        return 'form';
     }
 
     /**
@@ -21,7 +22,30 @@ class OpenIdFactory extends AbstractFactory
      */
     public function getKey()
     {
-        return 'openid';
+        return 'fp_openid';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addConfiguration(NodeDefinition $node)
+    {
+        parent::addConfiguration($node);
+
+        $this->addOption('required_parameters', array());
+        $this->addOption('optional_parameters', array());
+
+        $node
+            ->children()
+                ->scalarNode('client')->defaultValue('fp_openid.client.default')->cannotBeEmpty()->end()
+                ->arrayNode('required_parameters')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('optional_parameters')
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end()
+        ;
     }
 
     /**
@@ -29,21 +53,51 @@ class OpenIdFactory extends AbstractFactory
      */
     protected function getListenerId()
     {
-        return 'security.authentication.listener.openid';
+        return 'security.authentication.listener.fp_openid';
+    }
+
+    protected function createListener($container, $id, $config, $userProvider)
+    {
+        $listenerId = parent::createListener($container, $id, $config, $userProvider);
+
+        if (isset($config['client'])) {
+            $container
+                ->getDefinition($listenerId)
+                ->addMethodCall('setClient', array(new Reference($config['client'])))
+            ;
+        }
+
+        return $listenerId;
     }
 
     /**
-     *
      * {@inheritDoc}
      */
 	protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
-        $providerId = 'security.authentication.provider.openid.'.$id;
+        $providerId = 'security.authentication.provider.fp_openid.'.$id;
+
         $container
-            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.openid'))
-            ->replaceArgument(3, new Reference($userProviderId))
+            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.fp_openid'))
         ;
 
         return $providerId;
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createEntryPoint($container, $id, $config, $defaultEntryPoint)
+    {
+        $entryPointId = 'security.authentication.form_entry_point.'.$id;
+
+        $container
+            ->setDefinition($entryPointId, new DefinitionDecorator('security.authentication.form_entry_point'))
+            ->addArgument(new Reference('security.http_utils'))
+            ->addArgument($config['login_path'])
+            ->addArgument($config['use_forward'])
+        ;
+
+        return $entryPointId;
+    }
 }
