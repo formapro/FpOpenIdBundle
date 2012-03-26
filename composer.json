@@ -39,7 +39,7 @@
         }
     ],
     "autoload": {
-        "psr-0": { "Fp\\OpenIdBundle": "../../" }
+        "psr-0": { "Fp\\OpenIdBundle": "" }
     },
     "target-dir": "Fp/OpenIdBundle"
 }
