@@ -45,8 +45,6 @@ class LightOpenIdClient extends AbstractClient
         }
 
         $token = new OpenIdToken($lightOpenId->identity);
-        $token->setAuthenticated(true);
-        $token->setUser($this->guessUser($lightOpenId->identity, $lightOpenId->getAttributes()));
         $token->setAttributes($lightOpenId->getAttributes());
 
         return $token;

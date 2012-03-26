@@ -120,32 +120,4 @@ abstract class AbstractClient implements ClientInterface
     {
         return $request->get('openid_optional_parameters', array());
     }
-
-    /**
-     * @param string $identity
-     * @param array $attributes
-     */
-    protected function guessUser($identity, array $attributes = array())
-    {
-        $attributes = array_merge(array(
-            'contact/email' => null,
-            'namePerson/first' => null,
-            'namePerson/last' => null,
-        ), $attributes);
-
-        $username = '';
-        if ($attributes['contact/email']) {
-            $username = $attributes['contact/email'];
-        } else if ($attributes['namePerson/first']) {
-            $username = $attributes['namePerson/first'];
-
-            if ($attributes['namePerson/last']) {
-                $username .= " {$attributes['namePerson/last']}";
-            }
-        }
-
-        $provider = parse_url($identity, PHP_URL_HOST);
-
-        return $username . ' by ' . $provider;
-    }
 }

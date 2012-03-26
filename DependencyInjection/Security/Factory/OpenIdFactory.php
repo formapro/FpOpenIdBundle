@@ -38,6 +38,9 @@ class OpenIdFactory extends AbstractFactory
         $node
             ->children()
                 ->scalarNode('client')->defaultValue('fp_openid.client.default')->cannotBeEmpty()->end()
+                ->arrayNode('roles')
+                    ->prototype('scalar')->end()
+                ->end()
                 ->arrayNode('required_parameters')
                     ->prototype('scalar')->end()
                 ->end()
@@ -79,6 +82,7 @@ class OpenIdFactory extends AbstractFactory
 
         $container
             ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.fp_openid'))
+            ->replaceArgument(0, $config['roles'])
         ;
 
         return $providerId;

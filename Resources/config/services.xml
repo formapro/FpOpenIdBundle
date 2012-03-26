@@ -20,6 +20,7 @@
             public="false"
             abstract="true"
         >
+            <argument type="collection" /> <!-- roles -->
         </service>
 
         <service
