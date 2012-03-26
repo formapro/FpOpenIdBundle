@@ -76,6 +76,12 @@ class OpenIdAuthenticationListener extends AbstractAuthenticationListener
             $token = new OpenIdToken($identifier);
             $token->setState('verify');
         } else if ($identifier = $request->get("openid_op_endpoint", false)) {
+            // OpenID 2
+            $token = new OpenIdToken($identifier);
+            $token->setState('complete');
+        } else if($request->get("openid_mode", false) == 'id_res') {
+            // OpenID 1
+            $identifier = $request->get("openid_mode", false);
             $token = new OpenIdToken($identifier);
             $token->setState('complete');
         } elseif ($identifier = $request->get("openid_approved", false)) {
