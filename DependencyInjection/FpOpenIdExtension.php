@@ -19,5 +19,29 @@ class FpOpenIdExtension extends Extension
         
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+
+        if ($dbDriver = $configs['db_driver']) {
+            $identityClass = $configs['identity_class'];
+            if (false == $identityClass) {
+                throw new \InvalidArgumentException(sprintf(
+                    'The option `%s` has to be configured to use db_driver',
+                    'identity_class'
+                ));
+            }
+
+            $dbDriver = strtolower($dbDriver);
+            $supportedDbDrivers = array('orm');
+            if (false == in_array($dbDriver, $supportedDbDrivers)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid db driver "%s". Supported: %s',
+                    $configs['db_driver'],
+                    implode(', ', $supportedDbDrivers)
+                ));
+            }
+
+            $loader->load(sprintf('%s.xml', $dbDriver));
+
+            $container->setParameter('fp_openid.model.identity.class', $identityClass);
+        }
     }
 }

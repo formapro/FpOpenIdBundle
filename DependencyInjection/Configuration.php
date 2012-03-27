@@ -17,6 +17,8 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('db_driver')->defaultNull()->end()
+                ->scalarNode('identity_class')->defaultNull()->end()
             ->end()
         ;
 

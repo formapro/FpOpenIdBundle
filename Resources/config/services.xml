@@ -21,6 +21,7 @@
             abstract="true"
         >
             <argument type="collection" /> <!-- roles -->
+            <argument type="service" id="fp_openid.model.identity_manager" on-invalid="ignore" />
         </service>
 
         <service
