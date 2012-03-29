@@ -47,6 +47,10 @@ class Identity implements IdentityInterface
      */
     public function setIdentity($identity)
     {
+        if ($this->identity) {
+            throw new \LogicException('The identity was set before. It is not allowed update it');
+        }
+
         $this->identity = $identity;
     }
 
