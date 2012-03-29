@@ -17,6 +17,16 @@ use Fp\OpenIdBundle\Client\ClientInterface;
 
 abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticationListener
 {
+    /**
+     * @var \Fp\OpenIdBundle\Client\ClientInterface
+     */
+    private $client;
+
+    /**
+     * @var null|\Symfony\Component\EventDispatcher\EventDispatcherInterface
+     */
+    private $dispatcher;
+
     public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, array $options = array(), AuthenticationSuccessHandlerInterface $successHandler = null, AuthenticationFailureHandlerInterface $failureHandler = null, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
     {
         $options = array_merge(array(
@@ -25,12 +35,9 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
         ), $options);
 
         parent::__construct($securityContext, $authenticationManager, $sessionStrategy, $httpUtils,$providerKey, $options, $successHandler, $failureHandler, $logger, $dispatcher);
-    }
 
-    /**
-     * @var \Fp\OpenIdBundle\Client\ClientInterface
-     */
-    private $client;
+        $this->dispatcher = $dispatcher;
+    }
 
     /**
      * The client is required for the listener but since It is not possible overwrite constructor I use setter with the check in getter
@@ -54,6 +61,14 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
         }
 
         return $this->client;
+    }
+
+    /**
+     * @return null|\Symfony\Component\EventDispatcher\EventDispatcherInterface
+     */
+    protected function getDispatcher()
+    {
+        return $this->dispatcher;
     }
 
     /**

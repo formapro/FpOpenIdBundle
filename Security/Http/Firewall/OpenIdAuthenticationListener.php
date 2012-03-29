@@ -6,6 +6,8 @@ use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
+use Fp\OpenIdBundle\Security\Http\Event\IdentityProvidedEvent;
+use Fp\OpenIdBundle\Security\Http\SecurityEvents;
 
 class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
 {
@@ -28,6 +30,15 @@ class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
         }
 
         if ($result instanceof OpenIdToken) {
+            if ($this->getDispatcher()) {
+                $identityProvidedEvent = new IdentityProvidedEvent($result->getIdentity(), $request);
+                $this->getDispatcher()->dispatch(SecurityEvents::IDENTITY_PROVIDED, $identityProvidedEvent);
+
+                if ($identityProvidedEvent->getResponse()) {
+                    return $identityProvidedEvent->getResponse();
+                }
+            }
+
             return $this->authenticationManager->authenticate($result);
         }
 
