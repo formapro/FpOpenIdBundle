@@ -16,14 +16,15 @@ class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
      */
     protected function attemptAuthentication(Request $request)
     {
+        $openIdRequest = $request->duplicate();
         if (false == empty($this->options['required_parameters'])) {
-            $request->attributes->set('openid_required_parameters', $this->options['required_parameters']);
+            $openIdRequest->attributes->set('openid_required_parameters', $this->options['required_parameters']);
         }
         if (false == empty($this->options['openid_optional_parameters'])) {
-            $request->attributes->set('openid_optional_parameters', $this->options['required_parameters']);
+            $openIdRequest->attributes->set('openid_optional_parameters', $this->options['required_parameters']);
         }
 
-        $result = $this->getClient()->manage($request);
+        $result = $this->getClient()->manage($openIdRequest);
 
         if ($result instanceof RedirectResponse) {
             return $result;
