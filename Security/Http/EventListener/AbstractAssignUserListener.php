@@ -1,5 +1,5 @@
 <?php
-namespace Acme\DemoBundle\EventListener;
+namespace Fp\OpenIdBundle\Security\Http\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -14,14 +14,14 @@ use Fp\OpenIdBundle\Model\UserIdentityInterface;
 abstract class AbstractAssignUserListener implements EventSubscriberInterface
 {
     /**
-     * @var \Fp\OpenIdBundle\Model\IdentityManagerInterface|null
+     * @var \Fp\OpenIdBundle\Model\IdentityManagerInterface
      */
     private $identityManager;
 
     /**
      * @param \Fp\OpenIdBundle\Model\IdentityManagerInterface|null $identityManager
      */
-    public function __construct(IdentityManagerInterface $identityManager = null)
+    public function __construct(IdentityManagerInterface $identityManager)
     {
         $this->identityManager = $identityManager;
     }
@@ -35,14 +35,11 @@ abstract class AbstractAssignUserListener implements EventSubscriberInterface
      */
     public final function onIdentityProvided(IdentityProvidedEvent $event)
     {
-        if (false == $this->getIdentityManager()) {
-            return;
-        }
         if ($event->getResponse()) {
             return;
         }
 
-        $modelIdentity = $this->findOrCreateIdentity($event->getIdentity());
+        $modelIdentity = $this->findOrCreateIdentity($event->getIdentity(), $event->getAttributes());
         if (false == $modelIdentity instanceof UserIdentityInterface) {
             return;
         }
@@ -50,7 +47,7 @@ abstract class AbstractAssignUserListener implements EventSubscriberInterface
             return;
         }
 
-        $result = $this->assignUser($modelIdentity, $event->getRequest());
+        $result = $this->assignUser($modelIdentity->getAttributes(), $event->getRequest());
         if ($result instanceof Response) {
             $event->setResponse($result);
 
@@ -71,14 +68,14 @@ abstract class AbstractAssignUserListener implements EventSubscriberInterface
     }
 
     /**
-     * @param \Fp\OpenIdBundle\Model\UserIdentityInterface $identity
+     * @param array $attributes
      *
      * @return \Symfony\Component\HttpFoundation\Response|Symfony\Component\Security\Core\User\UserInterface
      */
-    abstract protected function assignUser(UserIdentityInterface $identity, Request $request);
+    abstract protected function assignUser(array $attributes, Request $request);
 
     /**
-     * @return \Fp\OpenIdBundle\Model\IdentityManagerInterface|null
+     * @return \Fp\OpenIdBundle\Model\IdentityManagerInterface
      */
     protected function getIdentityManager()
     {
@@ -90,7 +87,7 @@ abstract class AbstractAssignUserListener implements EventSubscriberInterface
      *
      * @return \Fp\OpenIdBundle\Model\IdentityInterface
      */
-    private function findOrCreateIdentity($identity)
+    private function findOrCreateIdentity($identity, array $attributes = array())
     {
         if ($modelIdentity = $this->identityManager->findByIdentity($identity)) {
             return $modelIdentity;
@@ -98,6 +95,7 @@ abstract class AbstractAssignUserListener implements EventSubscriberInterface
 
         $modelIdentity = $this->identityManager->create($identity);
         $modelIdentity->setIdentity($identity);
+        $modelIdentity->setAttributes($attributes);
 
         return $modelIdentity;
     }
