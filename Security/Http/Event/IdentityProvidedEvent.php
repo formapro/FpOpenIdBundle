@@ -15,6 +15,11 @@ class IdentityProvidedEvent extends Event
     protected $identity;
 
     /**
+     * @var array
+     */
+    protected $attributes;
+
+    /**
      * @var \Symfony\Component\HttpFoundation\Request
      */
     protected $request;
@@ -24,9 +29,10 @@ class IdentityProvidedEvent extends Event
      */
     protected $response;
 
-    public function __construct($identity, Request $request)
+    public function __construct($identity, array $attributes, Request $request)
     {
         $this->identity = $identity;
+        $this->attributes = $attributes;
         $this->request = $request;
     }
 
@@ -36,6 +42,14 @@ class IdentityProvidedEvent extends Event
     public function getIdentity()
     {
         return $this->request;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 
     /**
