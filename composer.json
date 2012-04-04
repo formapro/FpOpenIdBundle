@@ -1,3 +1,4 @@
+
 {
     "name": "fp/openid-bundle",
     "type": "symfony-bundle",
@@ -17,28 +18,11 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "lightopenid/lightopenid": "dev-master",
+        "fp/lightopenid": "dev-master",
         "symfony/symfony": "2.0.*"
     },
-    "repositories": {
-        "lightopenid/lightopenid":  {
-            "type": "package",
-            "package": {
-                "name": "lightopenid/lightopenid",
-                "version": "master-dev",
-                "source": {
-                    "url": "git://gitorious.org/lightopenid/lightopenid.git",
-                    "type": "git",
-                    "reference": "master"
-                },
-                "autoload": {
-                    "classmap": [""]
-                }
-            }
-        }
-    },
     "autoload": {
-        "psr-0": { "Fp\\OpenIdBundle": "../../" }
+        "psr-0": { "Fp\\OpenIdBundle": "" }
     },
     "target-dir": "Fp/OpenIdBundle"
 }
