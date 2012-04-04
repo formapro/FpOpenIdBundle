@@ -9,7 +9,7 @@
         <parameter key="security.authentication.listener.fp_openid.class">Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener</parameter>
         <parameter key="security.access.fp_openid_authenticated_voter.class">Fp\OpenIdBundle\Security\Core\Authorization\Voter\OpenIdAuthenticatedVoter</parameter>
 
-        <parameter key="fp_openid.client.light_open_id.class">Fp\OpenIdBundle\Bridge\Client\LightOpenIdClient</parameter>
+        <parameter key="fp_openid.relying_party.light_open_id.class">Fp\OpenIdBundle\Bridge\RelyingParty\LightOpenIdRelyingParty</parameter>
     </parameters>
 
     <services>
@@ -41,8 +41,8 @@
             <tag name="security.voter" />
         </service>
 
-        <service id="fp_openid.client.light_open_id" class="%fp_openid.client.light_open_id.class%"></service>
+        <service id="fp_openid.relying_party.light_open_id" class="%fp_openid.relying_party.light_open_id.class%"></service>
 
-        <service id="fp_openid.client.default" alias="fp_openid.client.light_open_id"></service>
+        <service id="fp_openid.relying_party.default" alias="fp_openid.relying_party.light_open_id"></service>
     </services>
 </container>

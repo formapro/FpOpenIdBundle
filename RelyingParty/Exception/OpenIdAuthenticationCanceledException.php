@@ -1,5 +1,5 @@
 <?php
-namespace Fp\OpenIdBundle\Security\Core\Exception;
+namespace Fp\OpenIdBundle\RelyingParty\Exception;
 
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 

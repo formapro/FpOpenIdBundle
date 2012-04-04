@@ -71,7 +71,7 @@ firewalls:
             path:             /logout
             target:           /
         fp_openid:
-            client:                         fp_openid.client.default
+            relying_party:                  fp_openid.relying_party.default
             required_parameters:
                 - contact/email
                 - namePerson/first

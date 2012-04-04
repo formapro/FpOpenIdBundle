@@ -37,7 +37,7 @@ class OpenIdFactory extends AbstractFactory
 
         $node
             ->children()
-                ->scalarNode('client')->defaultValue('fp_openid.client.default')->cannotBeEmpty()->end()
+                ->scalarNode('relying_party')->defaultValue('fp_openid.relying_party.default')->cannotBeEmpty()->end()
                 ->arrayNode('roles')
                     ->prototype('scalar')->end()
                 ->end()
@@ -63,10 +63,10 @@ class OpenIdFactory extends AbstractFactory
     {
         $listenerId = parent::createListener($container, $id, $config, $userProvider);
 
-        if (isset($config['client'])) {
+        if (isset($config['relying_party'])) {
             $container
                 ->getDefinition($listenerId)
-                ->addMethodCall('setClient', array(new Reference($config['client'])))
+                ->addMethodCall('setRelyingParty', array(new Reference($config['relying_party'])))
             ;
         }
 

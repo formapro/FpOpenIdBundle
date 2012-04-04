@@ -13,14 +13,14 @@ use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use Fp\OpenIdBundle\Client\ClientInterface;
+use Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface;
 
 abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticationListener
 {
     /**
-     * @var \Fp\OpenIdBundle\Client\ClientInterface
+     * @var \Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface $relyingParty
      */
-    private $client;
+    private $relyingParty;
 
     /**
      * @var null|\Symfony\Component\EventDispatcher\EventDispatcherInterface
@@ -40,31 +40,31 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
     }
 
     /**
-     * The client is required for the listener but since It is not possible overwrite constructor I use setter with the check in getter
+     * The relying party is required for the listener but since It is not possible overwrite constructor I use setter with the check in getter
      *
-     * @param \Fp\OpenIdBundle\Client\ClientInterface $client
+     * @param \Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface $relyingParty
      */
-    public function setClient(ClientInterface $client)
+    public function setRelyingParty(RelyingPartyInterface $relyingParty)
     {
-        $this->client = $client;
+        $this->relyingParty = $relyingParty;
     }
 
     /**
      * @throws \RuntimeException
      *
-     * @return \Fp\OpenIdBundle\Client\ClientInterface
+     * @return \Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface
      */
-    protected function getClient()
+    protected function getRelyingParty()
     {
-        if (false == $this->client) {
-            throw new \RuntimeException('The client is required for the listener work, but it was not set. Seems like miss configuration');
+        if (false == $this->relyingParty) {
+            throw new \RuntimeException('The relying party is required for the listener work, but it was not set. Seems like miss configuration');
         }
 
-        return $this->client;
+        return $this->relyingParty;
     }
 
     /**
-     * @return null|\Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface|null
      */
     protected function getDispatcher()
     {
@@ -80,6 +80,6 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
             return false;
         }
 
-        return $this->getClient()->canManage($request);
+        return $this->getRelyingParty()->supports($request);
     }
 }

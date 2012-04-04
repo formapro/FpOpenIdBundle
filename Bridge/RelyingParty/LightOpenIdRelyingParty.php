@@ -1,15 +1,15 @@
 <?php
-namespace Fp\OpenIdBundle\Bridge\Client;
+namespace Fp\OpenIdBundle\Bridge\RelyingParty;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-use Fp\OpenIdBundle\Client\AbstractClient;
-use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
-use Fp\OpenIdBundle\Security\Core\Exception\OpenIdAuthenticationCanceledException;
-use Fp\OpenIdBundle\Security\Core\Exception\OpenIdAuthenticationValidationFailedException;
+use Fp\OpenIdBundle\RelyingParty\AbstractRelyingParty;
+use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
+use Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationCanceledException;
+use Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationValidationFailedException;
 
-class LightOpenIdClient extends AbstractClient
+class LightOpenIdRelyingParty extends AbstractRelyingParty
 {
     /**
      * {@inheritdoc}
@@ -38,16 +38,13 @@ class LightOpenIdClient extends AbstractClient
               throw new OpenIdAuthenticationCanceledException('Authentication was canceled by the user on a provider side');
             }
 
-           throw new OpenIdAuthenticationValidationFailedException(sprintf(
+            throw new OpenIdAuthenticationValidationFailedException(sprintf(
                "Validation of response parameters failed for request: \n\n%s",
                $request
-           ));
+            ));
         }
 
-        $token = new OpenIdToken($lightOpenId->identity);
-        $token->setAttributes($lightOpenId->getAttributes());
-
-        return $token;
+        return new IdentityProviderResponse($lightOpenId->identity, $lightOpenId->getAttributes());
     }
 
     /**
