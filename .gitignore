@@ -41,3 +41,6 @@ composer.phar
 
 #### Vendors ####
 vendor/
+
+Tests/autoload.php
+Tests/phpunit.xml
