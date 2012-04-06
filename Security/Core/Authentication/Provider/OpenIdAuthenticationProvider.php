@@ -1,32 +1,53 @@
 <?php
 namespace Fp\OpenIdBundle\Security\Core\Authentication\Provider;
 
-use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserCheckerInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
-use Fp\OpenIdBundle\Model\IdentityManagerInterface;
-use Fp\OpenIdBundle\Model\UserIdentityInterface;
+use Fp\OpenIdBundle\Security\User\UserManagerInterface;
 
 class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 {
     /**
-     * @var array
+     * @var null|\Symfony\Component\Security\Core\User\UserProviderInterface
      */
-    protected $roles;
+    protected $userProvider;
 
     /**
-     * @var     \Fp\OpenIdBundle\Model\IdentityManagerInterface|null
+     * @var null|\Symfony\Component\Security\Core\User\UserCheckerInterface
      */
-    protected $identityManager;
+    protected $userChecker;
 
     /**
-     * @param array $roles
+     * @var bool
      */
-    public function __construct(array $roles = array(), IdentityManagerInterface $identityManager = null)
+    protected $createIfNotExists;
+
+    /**
+     * @param null|\Symfony\Component\Security\Core\User\UserProviderInterface $userProvider
+     * @param null|\Symfony\Component\Security\Core\User\UserCheckerInterface $userChecker
+     * @param bool $createIfNotExists
+     */
+    public function __construct(UserProviderInterface $userProvider = null, UserCheckerInterface $userChecker = null, $createIfNotExists = false)
     {
-        $this->roles = $roles;
-        $this->identityManager = $identityManager;
+        if (null !== $userProvider && null === $userChecker) {
+            throw new \InvalidArgumentException('$userChecker cannot be null, if $userProvider is not null.');
+        }
+
+        if ($createIfNotExists && !$userProvider instanceof UserManagerInterface) {
+            throw new \InvalidArgumentException('The $userProvider must implement UserManagerInterface if $createIfNotExists is true.');
+        }
+
+        $this->userProvider = $userProvider;
+        $this->userChecker = $userChecker;
+        $this->createIfNotExists = $createIfNotExists;
     }
 
     /**
@@ -38,32 +59,32 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
             return null;
         }
 
-        $roles = $this->roles;
-        $user = $this->guessUser($token);
-        $identity = $token->getIdentity();
-        if ($this->identityManager) {
-            if (false == $identityModel = $this->identityManager->findByIdentity($identity)) {
-                $identityModel = $this->identityManager->create();
-                $identityModel->setIdentity($identity);
-                $identityModel->setAttributes($token->getAttributes());
-
-                $this->identityManager->update($identityModel);
-            }
-
-            if ($identityModel instanceof UserIdentityInterface && $identityModel->getUser()) {
-                $roles = $identityModel->getUser()->getRoles();
-                $user = $identityModel->getUser();
-            }
-
-            $identity = $identityModel;
+        if ($token->getUser() instanceof UserInterface) {
+            return $this->createAuthenticatedToken(
+                $token->getIdentity(),
+                $token->getAttributes(),
+                $token->getUser()->getRoles(),
+                $token->getUser()
+            );
         }
 
-        $newToken = new OpenIdToken($identity, $roles);
-        $newToken->setAuthenticated(true);
-        $newToken->setAttributes($token->getAttributes());
-        $newToken->setUser($user);
+        try {
+            $user = $this->userProvider ?
+                $this->getProviderUser($token->getIdentity(), $token->getAttributes()) :
+                $this->getDefaultUser($token->getIdentity(), $token->getAttributes())
+            ;
 
-        return $newToken;
+            return $this->createAuthenticatedToken(
+                $token->getIdentity(),
+                $token->getAttributes(),
+                $user instanceof UserInterface ? $user->getRoles() : array(),
+                $user
+            );
+        } catch (AuthenticationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw new AuthenticationServiceException($e->getMessage(), null, (int) $e->getCode(), $e);
+        }
     }
 
     /**
@@ -75,31 +96,81 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
     }
 
     /**
+     * @param string $identity
+     *
+     * @throws \RuntimeException if provider did not provide a user implementation.
+     *
+     * @return \Symfony\Component\Security\Core\User\UserInterface
+     */
+    protected function getProviderUser($identity, array $attributes)
+    {
+        try {
+            $user = $this->userProvider->loadUserByUsername($identity);
+        } catch (UsernameNotFoundException $e) {
+            if (false == $this->createIfNotExists) {
+                throw $e;
+            }
+
+            $user = $this->userProvider->createUserFromIdentity($identity, $attributes);
+        }
+
+        if (false == $user instanceof UserInterface) {
+            throw new \RuntimeException('User provider did not return an implementation of user interface.');
+        }
+
+        return $user;
+    }
+
+    /**
      * @param \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken $token
      *
      * @return string
      */
-    protected function guessUser(OpenIdToken $token)
+    protected function getDefaultUser($identity, array $attributes)
     {
-        $attributes = array_merge(array(
-            'contact/email' => null,
-            'namePerson/first' => null,
-            'namePerson/last' => null,
-        ), $token->getAttributes());
+        return $identity;
 
-        $username = 'a user';
-        if ($attributes['contact/email']) {
-            $username = $attributes['contact/email'];
-        } else if ($attributes['namePerson/first']) {
-            $username = $attributes['namePerson/first'];
+//        $attributes = array_merge(array(
+//            'contact/email' => null,
+//            'namePerson/first' => null,
+//            'namePerson/last' => null,
+//        ), $attributes);
+//
+//        $username = 'a user';
+//        if ($attributes['contact/email']) {
+//            $username = $attributes['contact/email'];
+//        } else if ($attributes['namePerson/first']) {
+//            $username = $attributes['namePerson/first'];
+//
+//            if ($attributes['namePerson/last']) {
+//                $username .= " {$attributes['namePerson/last']}";
+//            }
+//        }
+//
+//        $provider = parse_url($identity, PHP_URL_HOST);
+//
+//        return "{$username} by {$provider}";
+    }
 
-            if ($attributes['namePerson/last']) {
-                $username .= " {$attributes['namePerson/last']}";
-            }
+    /**
+     * @param string $identity
+     * @param array $attributes
+     * @param array $roles
+     * @param mixed $user
+     *
+     * @return \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken
+     */
+    protected function createAuthenticatedToken($identity, array $attributes, array $roles, $user)
+    {
+        if ($user instanceof UserInterface) {
+            $this->userChecker->checkPostAuth($user);
         }
 
-        $provider = parse_url($token->getIdentity(), PHP_URL_HOST);
+        $newToken = new OpenIdToken($identity, $roles);
+        $newToken->setUser($user);
+        $newToken->setAttributes($attributes);
+        $newToken->setAuthenticated(true);
 
-        return "{$username} by {$provider}";
+        return $newToken;
     }
 }

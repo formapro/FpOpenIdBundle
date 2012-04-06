@@ -10,6 +10,14 @@ use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractF
 class OpenIdFactory extends AbstractFactory
 {
     /**
+     * {@inheritdoc}
+     */
+    public function __construct()
+    {
+        $this->addOption('create_user_if_not_exists', false);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getPosition()
@@ -32,8 +40,9 @@ class OpenIdFactory extends AbstractFactory
     {
         parent::addConfiguration($node);
 
-        $this->addOption('required_parameters', array());
-        $this->addOption('optional_parameters', array());
+        // it isn't done in constructor because parent::addConfiguration cannot handle array default value
+        $this->addOption('required_attributes', array());
+        $this->addOption('optional_attributes', array());
 
         $node
             ->children()
@@ -41,10 +50,10 @@ class OpenIdFactory extends AbstractFactory
                 ->arrayNode('roles')
                     ->prototype('scalar')->end()
                 ->end()
-                ->arrayNode('required_parameters')
+                ->arrayNode('required_attributes')
                     ->prototype('scalar')->end()
                 ->end()
-                ->arrayNode('optional_parameters')
+                ->arrayNode('optional_attributes')
                     ->prototype('scalar')->end()
                 ->end()
             ->end()
@@ -79,11 +88,17 @@ class OpenIdFactory extends AbstractFactory
 	protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
         $providerId = 'security.authentication.provider.fp_openid.'.$id;
+        $provider = new DefinitionDecorator('security.authentication.provider.fp_openid');
+        $container->setDefinition($providerId, $provider);
 
-        $container
-            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.fp_openid'))
-            ->replaceArgument(0, $config['roles'])
-        ;
+        // with user provider
+        if (isset($config['provider'])) {
+            $provider
+                ->addArgument(new Reference($userProviderId))
+                ->addArgument(new Reference('security.user_checker'))
+                ->addArgument($config['create_user_if_not_exists'])
+            ;
+        }
 
         return $providerId;
 	}
