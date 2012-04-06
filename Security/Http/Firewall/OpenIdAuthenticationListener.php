@@ -41,7 +41,10 @@ class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
                 }
             }
 
-            return $this->authenticationManager->authenticate(new OpenIdToken($result->getIdentity(), $result->getAttributes()));
+            $token = new OpenIdToken($result->getIdentity());
+            $token->setAttributes($result->getAttributes());
+
+            return $this->authenticationManager->authenticate($token);
         }
 
         throw new \RuntimeException(sprintf(
