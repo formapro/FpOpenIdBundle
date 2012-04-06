@@ -88,11 +88,17 @@ class OpenIdFactory extends AbstractFactory
 	protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
         $providerId = 'security.authentication.provider.fp_openid.'.$id;
+        $provider = new DefinitionDecorator('security.authentication.provider.fp_openid');
+        $container->setDefinition($providerId, $provider);
 
-        $container
-            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.fp_openid'))
-            ->replaceArgument(0, $config['roles'])
-        ;
+        // with user provider
+        if (isset($config['provider'])) {
+            $provider
+                ->addArgument(new Reference($userProviderId))
+                ->addArgument(new Reference('security.user_checker'))
+                ->addArgument($config['create_user_if_not_exists'])
+            ;
+        }
 
         return $providerId;
 	}
