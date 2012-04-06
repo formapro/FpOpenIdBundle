@@ -3,6 +3,7 @@ namespace Fp\OpenIdBundle\Tests\Security\Core\Authentication;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider;
 use Fp\OpenIdBundle\Security\User\UserManagerInterface;
@@ -258,7 +259,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException RuntimeException
+     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationServiceException
      * @expectedExceptionMessage User provider did not return an implementation of user interface.
      */
     public function throwIfUserProviderReturnNotUserInstance()
@@ -377,7 +378,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException RuntimeException
+     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationServiceException
      * @expectedExceptionMessage User provider did not return an implementation of user interface.
      */
     public function throwIfUserManagerCreateNotUserInstance()
@@ -408,6 +409,45 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $token->setUser('');
 
         $authProvider->authenticate($token);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldWrapAnyThrownExceptionsAsAuthenticatedServiceException()
+    {
+        $expectedPreviousException = new \Exception(
+            $expectedMessage = 'Something goes wrong',
+            $expectedCode = 23
+        );
+
+        $userProviderMock = $this->createUserProviderMock();
+        $userProviderMock
+            ->expects($this->once())
+            ->method('loadUserByUsername')
+            ->will($this->throwException($expectedPreviousException))
+        ;
+
+        $authProvider = new OpenIdAuthenticationProvider(
+            $userProviderMock,
+            $this->createUserCheckerMock()
+        );
+
+        $token = new OpenIdToken('identity');
+        $token->setUser('');
+
+        try {
+            $authProvider->authenticate($token);
+        } catch (AuthenticationServiceException $e) {
+            $this->assertSame($expectedPreviousException, $e->getPrevious());
+            $this->assertEquals($expectedMessage, $e->getMessage());
+            $this->assertEquals($expectedCode, $e->getCode());
+            $this->assertNull($e->getExtraInformation());
+
+            return;
+        }
+
+        $this->fail('Expected exception: AuthenticationServiceException was not thrown');
     }
 
     protected function createUserProviderMock()

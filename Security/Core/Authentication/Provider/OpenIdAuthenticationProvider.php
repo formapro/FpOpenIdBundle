@@ -55,7 +55,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
      */
     public function authenticate(TokenInterface $token)
     {
-        if (!$this->supports($token)) {
+        if (false == $this->supports($token)) {
             return null;
         }
 
@@ -85,8 +85,6 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
         } catch (\Exception $e) {
             throw new AuthenticationServiceException($e->getMessage(), null, (int) $e->getCode(), $e);
         }
-
-        throw new AuthenticationException('The openid user could not be retrieved.');
     }
 
     /**
