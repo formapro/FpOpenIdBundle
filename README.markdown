@@ -1,4 +1,4 @@
-# Overview
+# Overview [![Build Status](https://secure.travis-ci.org/formapro/FpOpenIdBundle.png?branch=new-version)](http://travis-ci.org/formapro/FpOpenIdBundle)
 
 Integrates OpenId feature to symfony's security layer.
 Supports these 3rd party libraries:
