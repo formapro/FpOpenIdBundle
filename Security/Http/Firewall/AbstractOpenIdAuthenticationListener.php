@@ -22,21 +22,14 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
      */
     private $relyingParty;
 
-    /**
-     * @var null|\Symfony\Component\EventDispatcher\EventDispatcherInterface
-     */
-    private $dispatcher;
-
     public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, array $options = array(), AuthenticationSuccessHandlerInterface $successHandler = null, AuthenticationFailureHandlerInterface $failureHandler = null, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
     {
         $options = array_merge(array(
-            'required_parameters' => array(),
-            'optional_parameters' => array(),
+            'required_attributes' => array(),
+            'optional_attributes' => array(),
         ), $options);
 
         parent::__construct($securityContext, $authenticationManager, $sessionStrategy, $httpUtils,$providerKey, $options, $successHandler, $failureHandler, $logger, $dispatcher);
-
-        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -61,14 +54,6 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
         }
 
         return $this->relyingParty;
-    }
-
-    /**
-     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface|null
-     */
-    protected function getDispatcher()
-    {
-        return $this->dispatcher;
     }
 
     /**
