@@ -6,7 +6,7 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider;
-use Fp\OpenIdBundle\Security\User\UserManagerInterface;
+use Fp\OpenIdBundle\Security\Core\User\UserManagerInterface;
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
 
 class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase

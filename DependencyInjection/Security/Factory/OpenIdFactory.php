@@ -47,9 +47,6 @@ class OpenIdFactory extends AbstractFactory
         $node
             ->children()
                 ->scalarNode('relying_party')->defaultValue('fp_openid.relying_party.default')->cannotBeEmpty()->end()
-                ->arrayNode('roles')
-                    ->prototype('scalar')->end()
-                ->end()
                 ->arrayNode('required_attributes')
                     ->prototype('scalar')->end()
                 ->end()

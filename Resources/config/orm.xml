@@ -6,12 +6,17 @@
 
     <parameters>
         <parameter key="fp_openid.model.identity_manager.class">Fp\OpenIdBundle\Entity\IdentityManager</parameter>
+        <parameter key="fp_openid.user_manager.class">Fp\OpenIdBundle\Model\UserManager</parameter>
     </parameters>
 
     <services>
         <service id="fp_openid.model.identity_manager" class="%fp_openid.model.identity_manager.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument>%fp_openid.model.identity.class%</argument>
+        </service>
+
+        <service id="fp_openid.user_manager" class="%fp_openid.user_manager.class%">
+            <argument type="service" id="fp_openid.model.identity_manager" />
         </service>
     </services>
 

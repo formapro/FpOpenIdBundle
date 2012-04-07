@@ -31,6 +31,19 @@ class ConfigurationTest extends  \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     */
+    public function shouldSetNullAsDefaultDbDriver()
+    {
+        $config = array('fp_open_id' => array());
+
+        $processedConfig = $this->processConfiguration($config);
+
+        $this->assertArrayHasKey('db_driver', $processedConfig);
+        $this->assertNull($processedConfig['db_driver']);
+    }
+
+    /**
+     * @test
      *
      * @expectedException Symfony\Component\Config\Definition\Exception\InvalidTypeException
      * @expectedExceptionMessage Invalid type for path "fp_open_id.db_driver". Expected scalar, but got array.
@@ -58,6 +71,19 @@ class ConfigurationTest extends  \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     */
+    public function shouldSetNullAsDefaultIdentityClass()
+    {
+        $config = array('fp_open_id' => array());
+
+        $processedConfig = $this->processConfiguration($config);
+
+        $this->assertArrayHasKey('identity_class', $processedConfig);
+        $this->assertNull($processedConfig['identity_class']);
+    }
+
+    /**
+     * @test
      *
      * @expectedException Symfony\Component\Config\Definition\Exception\InvalidTypeException
      * @expectedExceptionMessage Invalid type for path "fp_open_id.identity_class". Expected scalar, but got array.
@@ -76,6 +102,6 @@ class ConfigurationTest extends  \PHPUnit_Framework_TestCase
         $configuration = new Configuration();
         $processor = new Processor();
 
-        $processor->processConfiguration($configuration, $configs);
+        return $processor->processConfiguration($configuration, $configs);
     }
 }

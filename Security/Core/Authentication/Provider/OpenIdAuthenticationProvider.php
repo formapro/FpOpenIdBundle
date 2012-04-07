@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
-use Fp\OpenIdBundle\Security\User\UserManagerInterface;
+use Fp\OpenIdBundle\Security\Core\User\UserManagerInterface;
 
 class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 {
