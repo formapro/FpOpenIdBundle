@@ -32,15 +32,6 @@ class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
         }
 
         if ($result instanceof IdentityProviderResponse) {
-            if ($this->getDispatcher()) {
-                $identityProvidedEvent = new IdentityProvidedEvent($result->getIdentity(), $result->getAttributes(), $request);
-                $this->getDispatcher()->dispatch(SecurityEvents::IDENTITY_PROVIDED, $identityProvidedEvent);
-
-                if ($identityProvidedEvent->getResponse()) {
-                    return $identityProvidedEvent->getResponse();
-                }
-            }
-
             $token = new OpenIdToken($result->getIdentity());
             $token->setAttributes($result->getAttributes());
 
