@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProvid
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
 use Fp\OpenIdBundle\Security\Core\User\UserManagerInterface;
+use Fp\OpenIdBundle\Security\Core\Exception\UsernameByIdentityNotFoundException;
 
 class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 {
@@ -80,6 +81,14 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
                 $user instanceof UserInterface ? $user->getRoles() : array(),
                 $user
             );
+        } catch (UsernameNotFoundException $e) {
+            $usernameException = new UsernameByIdentityNotFoundException(
+                $e->getMessage(), null, (int) $e->getCode(), $e
+            );
+            $usernameException->setIdentity($token->getIdentity());
+            $usernameException->setAttributes($token->getAttributes());
+
+            throw $usernameException;
         } catch (AuthenticationException $e) {
             throw $e;
         } catch (\Exception $e) {

@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Fp\OpenIdBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider;
 use Fp\OpenIdBundle\Security\Core\User\UserManagerInterface;
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
+use Fp\OpenIdBundle\Security\Core\Exception\UsernameByIdentityNotFoundException;
 
 class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -409,6 +410,55 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $token->setUser('');
 
         $authProvider->authenticate($token);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldWrapUsernameNotFoundExceptionsAsUsernameByIdentityNotFoundExceptionWithIdentityAndAttributesSet()
+    {
+        $expectedIdentity = 'the_identity';
+        $expectedAttributes = array(
+            'foo' => 'foo',
+            'bar' => 'bar'
+        );
+
+        $expectedPreviousException = new UsernameNotFoundException(
+            $expectedMessage = 'user not found',
+            null,
+            $expectedCode = 23
+        );
+
+        $userProviderMock = $this->createUserProviderMock();
+        $userProviderMock
+            ->expects($this->once())
+            ->method('loadUserByUsername')
+            ->will($this->throwException($expectedPreviousException))
+        ;
+
+        $authProvider = new OpenIdAuthenticationProvider(
+            $userProviderMock,
+            $this->createUserCheckerMock()
+        );
+
+        $token = new OpenIdToken($expectedIdentity);
+        $token->setUser('');
+        $token->setAttributes($expectedAttributes);
+
+        try {
+            $authProvider->authenticate($token);
+        } catch (UsernameByIdentityNotFoundException $e) {
+            $this->assertSame($expectedPreviousException, $e->getPrevious());
+            $this->assertEquals($expectedMessage, $e->getMessage());
+            $this->assertEquals($expectedCode, $e->getCode());
+            $this->assertNull($e->getExtraInformation());
+            $this->assertEquals($expectedIdentity, $e->getIdentity());
+            $this->assertEquals($expectedAttributes, $e->getAttributes());
+
+            return;
+        }
+
+        $this->fail('Expected exception: UsernameByIdentityNotFoundException was not thrown');
     }
 
     /**
