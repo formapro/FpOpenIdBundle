@@ -81,14 +81,6 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
                 $user instanceof UserInterface ? $user->getRoles() : array(),
                 $user
             );
-        } catch (UsernameNotFoundException $e) {
-            $usernameException = new UsernameByIdentityNotFoundException(
-                $e->getMessage(), null, (int) $e->getCode(), $e
-            );
-            $usernameException->setIdentity($token->getIdentity());
-            $usernameException->setAttributes($token->getAttributes());
-
-            throw $usernameException;
         } catch (AuthenticationException $e) {
             throw $e;
         } catch (\Exception $e) {

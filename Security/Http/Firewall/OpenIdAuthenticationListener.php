@@ -2,6 +2,7 @@
 namespace Fp\OpenIdBundle\Security\Http\Firewall;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -35,7 +36,13 @@ class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
             $token = new OpenIdToken($result->getIdentity());
             $token->setAttributes($result->getAttributes());
 
-            return $this->authenticationManager->authenticate($token);
+            try {
+                return $this->authenticationManager->authenticate($token);
+            } catch (AuthenticationException $e) {
+                $e->setExtraInformation($result);
+
+                throw $e;
+            }
         }
 
         throw new \RuntimeException(sprintf(

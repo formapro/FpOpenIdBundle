@@ -2,6 +2,8 @@
 namespace Fp\OpenIdBundle\Tests\Security\Http\Firewall;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\HttpFoundation\Response;
 
 use Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener;
 use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
@@ -219,6 +221,63 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldAddIdentityProviderResponseToEachThrownAuthenticationExceptionAsExtraInformation()
+    {
+        $expectedIdentityProviderResponse = new IdentityProviderResponse('an_identity');
+        $expectedAuthenticationException = new AuthenticationException('an error');
+
+        $requestMock = $this->createRequestStub(
+            $hasSessionReturn = true,
+            $hasPreviousSessionReturn = true,
+            $duplicateReturn = $this->createRequestMock()
+        );
+
+        $relyingPartyMock = $this->createRelyingPartyStub(
+            $supportsReturn = true,
+            $manageReturn = $expectedIdentityProviderResponse
+        );
+
+        $authenticationManagerMock = $this->createAuthenticationManagerMock();
+        $authenticationManagerMock
+            ->expects($this->once())
+            ->method('authenticate')
+            ->will($this->throwException($expectedAuthenticationException))
+        ;
+
+        $testcase = $this;
+        $authenticationFailureHandlerMock = $this->createAuthenticationFailureHandlerMock();
+        $authenticationFailureHandlerMock
+            ->expects($this->once())
+            ->method('onAuthenticationFailure')
+            ->will($this->returnCallback(function($request, $exception) use($testcase, $expectedAuthenticationException, $expectedIdentityProviderResponse) {
+                $testcase->assertSame($exception, $expectedAuthenticationException);
+                $testcase->assertSame($expectedIdentityProviderResponse, $exception->getExtraInformation());
+
+                return new Response('');
+            }))
+        ;
+
+        $eventMock = $this->createGetResponseEventStub($requestMock);
+
+        $listener = new OpenIdAuthenticationListener(
+            $this->createSecurityContextMock(),
+            $authenticationManagerMock,
+            $this->createSessionAuthenticationStrategyMock(),
+            $this->createHttpUtilsStub($checkRequestPathReturn = true),
+            'providerKey',
+            $options = array(),
+            null,
+            $authenticationFailureHandlerMock
+        );
+
+        $listener->setRelyingParty($relyingPartyMock);
+
+        $listener->handle($eventMock);
+    }
+
+    /**
+     * @test
+     */
     public function shouldCreateOpenIdTokenUsingIdentityProviderResponseAndPassItToAuthenticationManager()
     {
         $requestMock = $this->createRequestStub(
@@ -425,6 +484,14 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         ;
 
         return $httpUtilsMock;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface
+     */
+    protected function createAuthenticationFailureHandlerMock()
+    {
+        return $this->getMock('Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface');
     }
 
     protected function createGetResponseEventMock()

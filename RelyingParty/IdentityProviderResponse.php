@@ -1,7 +1,7 @@
 <?php
 namespace Fp\OpenIdBundle\RelyingParty;
 
-class IdentityProviderResponse
+class IdentityProviderResponse implements \Serializable
 {
     /**
      * @var string
@@ -37,5 +37,21 @@ class IdentityProviderResponse
     public function getAttributes()
     {
         return $this->attributes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function serialize()
+    {
+        return serialize(array($this->identity, $this->attributes));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unserialize($serialized)
+    {
+        list($this->identity, $this->attributes) = unserialize($serialized);
     }
 }

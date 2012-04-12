@@ -15,7 +15,7 @@ interface RelyingPartyInterface
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @throws \RuntimeException if cannot manage the Request
+     * @throws \InvalidArgumentException if cannot manage the Request
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse
      */

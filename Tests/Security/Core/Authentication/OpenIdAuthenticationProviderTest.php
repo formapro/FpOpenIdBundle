@@ -415,55 +415,6 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldWrapUsernameNotFoundExceptionsAsUsernameByIdentityNotFoundExceptionWithIdentityAndAttributesSet()
-    {
-        $expectedIdentity = 'the_identity';
-        $expectedAttributes = array(
-            'foo' => 'foo',
-            'bar' => 'bar'
-        );
-
-        $expectedPreviousException = new UsernameNotFoundException(
-            $expectedMessage = 'user not found',
-            null,
-            $expectedCode = 23
-        );
-
-        $userProviderMock = $this->createUserProviderMock();
-        $userProviderMock
-            ->expects($this->once())
-            ->method('loadUserByUsername')
-            ->will($this->throwException($expectedPreviousException))
-        ;
-
-        $authProvider = new OpenIdAuthenticationProvider(
-            $userProviderMock,
-            $this->createUserCheckerMock()
-        );
-
-        $token = new OpenIdToken($expectedIdentity);
-        $token->setUser('');
-        $token->setAttributes($expectedAttributes);
-
-        try {
-            $authProvider->authenticate($token);
-        } catch (UsernameByIdentityNotFoundException $e) {
-            $this->assertSame($expectedPreviousException, $e->getPrevious());
-            $this->assertEquals($expectedMessage, $e->getMessage());
-            $this->assertEquals($expectedCode, $e->getCode());
-            $this->assertNull($e->getExtraInformation());
-            $this->assertEquals($expectedIdentity, $e->getIdentity());
-            $this->assertEquals($expectedAttributes, $e->getAttributes());
-
-            return;
-        }
-
-        $this->fail('Expected exception: UsernameByIdentityNotFoundException was not thrown');
-    }
-
-    /**
-     * @test
-     */
     public function shouldWrapAnyThrownExceptionsAsAuthenticatedServiceException()
     {
         $expectedPreviousException = new \Exception(

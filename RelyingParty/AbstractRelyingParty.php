@@ -31,7 +31,7 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
     public function manage(Request $request)
     {
         if (false == $this->supports($request)) {
-            throw new \RuntimeException('The relying party does not support the request');
+            throw new \InvalidArgumentException('The relying party does not support the request');
         }
 
         if ($identifier = $request->get("openid_identifier", false)) {
