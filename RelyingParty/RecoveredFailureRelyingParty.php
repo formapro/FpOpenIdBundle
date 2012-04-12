@@ -39,6 +39,8 @@ class RecoveredFailureRelyingParty implements RelyingPartyInterface
 
         $error = $request->getSession()->get(SecurityContextInterface::AUTHENTICATION_ERROR);
 
+        $request->getSession()->remove(SecurityContextInterface::AUTHENTICATION_ERROR);
+
         return $error->getExtraInformation();
     }
 }

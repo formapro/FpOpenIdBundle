@@ -136,9 +136,32 @@ class RecoveredFailureRelyingPartyTest extends \PHPUnit_Framework_TestCase
         //guard
         $this->assertTrue($relyingParty->supports($request));
 
+        $this->assertSame($expectedIdentityProviderResponse, $relyingParty->manage($request));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldRemoveErrorFromSessionOnManage()
+    {
+        $error = new AuthenticationException('an error');
+        $error->setExtraInformation(new IdentityProviderResponse('an_identity'));
+
+        $session = $this->createSessionStub($returnGet = $error);
+        $session
+            ->expects($this->once())
+            ->method('remove')
+            ->with($this->equalTo(SecurityContextInterface::AUTHENTICATION_ERROR))
+        ;
+
+        $request = $this->createRequestStub($returnGet = 1, $returnSession = $session);
+
         $relyingParty = new RecoveredFailureRelyingParty;
 
-        $this->assertSame($expectedIdentityProviderResponse, $relyingParty->manage($request));
+        //guard
+        $this->assertTrue($relyingParty->supports($request));
+
+        $relyingParty->manage($request);
     }
 
     public function createRequestMock()
