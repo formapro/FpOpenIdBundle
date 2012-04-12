@@ -34,8 +34,6 @@ class RelyingPartyCollection implements RelyingPartyInterface
      */
     public function supports(Request $request)
     {
-        var_dump($this->findRelyingPartySupportedRequest($request));
-
         return (bool) $this->findRelyingPartySupportedRequest($request);
     }
 
