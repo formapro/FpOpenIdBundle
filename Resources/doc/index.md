@@ -179,4 +179,4 @@ of the bundle.
 
 The following documents are available:
 
-- TODO
+- [Configuration Reference](configuration_reference.md)
