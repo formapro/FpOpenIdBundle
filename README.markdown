@@ -1,136 +1,51 @@
-# Overview [![Build Status](https://secure.travis-ci.org/formapro/FpOpenIdBundle.png?branch=master)](http://travis-ci.org/formapro/FpOpenIdBundle)
+FpOpenIdBundle
+==============
 
-Integrates OpenId feature to symfony's security layer.
-Supports these 3rd party libraries:
+The FpOpenIdBundle adds support of [openid authentication](http://openid.net/) to symfony's security. It uses [LightOpenId](http://gitorious.org/lightopenid) as a relying party(client).
 
-* [LightOpenID](http://gitorious.org/lightopenid)
+Features include:
 
-# Get started
+- Fully integrated to Symfony's Security
+- Unit tested
 
-**The master branch does not supports symfony 2.0 please use branch [1.0](https://github.com/formapro/FpOpenIdBundle/tree/1.0).**
+**Note:** Previous versions of the bundle [1.0](https://github.com/formapro/FpOpenIdBundle/tree/1.0) for Symfony 2.0.x and [1.1](https://github.com/formapro/FpOpenIdBundle/tree/1.1) for Symfony 2.1.x
+are not supported any more.
 
-* Setup [LightOpenId](http://gitorious.org/lightopenid)
+**Caution:** This bundle is developed in sync with [symfony's repository](https://github.com/symfony/symfony).
 
-```
-git submodule add git://gitorious.org/lightopenid/lightopenid.git /path/to/vendor/LightOpenId
-```
+[![Build Status](https://secure.travis-ci.org/formapro/FpOpenIdBundle.png?branch=master)](http://travis-ci.org/formapro/FpOpenIdBundle)
 
-* Setup Bundle
+Documentation
+-------------
 
-```
-git submodule add git@github.com:formapro/FpOpenIdBundle.git /path/to/vendor/bundles/Fp/OpenIdBundle
-```
+The bulk of the documentation is stored in the `Resources/doc/index.md` file in this bundle:
 
-* Configure autioload.php
+[Read the Documentation for master](https://github.com/formapro/FpOpenIdBundle/blob/master/Resources/doc/index.md)
 
-```php
-<?php
+Installation
+------------
 
-use Symfony\Component\ClassLoader\UniversalClassLoader;
-use Symfony\Component\ClassLoader\MapClassLoader;
+All the installation instructions are located in [documentation](https://github.com/formapro/FpOpenIdBundle/blob/master/Resources/doc/index.md).
 
-$universalLoader = new UniversalClassLoader;
-$universalLoader->registerNamespaces(array(
-    'Fp' => '/path/to/vendor/bundles'
-));
+License
+-------
 
-$universalLoader->register();
+This bundle is under the MIT license. See the complete license in the bundle:
 
-$mapLoader = new MapClassLoader(array(
-    'LightOpenID' => '/path/to/venodr/LightOpenId/openid.php'
-));
+    Resources/meta/LICENSE
 
-$mapLoader->register();
-```
+About
+-----
 
-* Configure AppKernel.php
+FpOpenIdBundle is a [formapro](https://github.com/formapro) initiative.
+See also the list of [contributors](https://github.com/formapro/FpOpenIdBundle/contributors).
 
-```php
-<?php
+Reporting an issue or a feature request
+---------------------------------------
 
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        $bundles = array(
-            new Fp\OpenIdBundle\FpOpenIdBundle()
-        );
-    }
-}
-```
+Issues and feature requests are tracked in the [Github issue tracker](https://github.com/formapro/FpOpenIdBundle/issues).
 
-* Full openid firewall configuration
-
-```yml
-
-firewalls:
-    secured_area:
-        pattern:              ^/
-        anonymous:            ~
-        logout:
-            path:             /logout
-            target:           /
-        fp_openid:
-            relying_party:                  fp_openid.relying_party.default
-            required_parameters:
-                - contact/email
-                - namePerson/first
-            optional_parameters:
-                - namePerson/last
-            required_parameters:
-            check_path:                     /login_check
-            login_path:                     /login',
-            always_use_default_target_path: false
-            default_target_path:            /
-            target_path_parameter:          _target_path
-            use_referer:                    false
-            failure_path:                   null
-            failure_forward:                false
-
-```
-
-* Try it with google:
-
-```
-https://www.google.com/accounts/o8/id
-```
-
-* Getting user information from openid provider:
-
-**Pay attention to that fact that an openid provider is not required to return any data, you can get nothing even if you set it required**
-
-Request parameters:
-
-```yml
-
-firewalls:
-    secured_area:
-        fp_openid:
-            required_parameters:
-                - contact/email
-                - namePerson/first
-            optional_parameters:
-                - namePerson/last
-```
-
-Get them from token:
-
-```php
-<?php
-
-/**
- * @var $securityContext \Symfony\Component\Security\Core\SecurityContextInterface
- */
-$attributes = $securityContext->getToken()->getAttributes();
-
-if (isset($attributes['contact/email'])) {
-    echo $attributes['contact/email'];
-}
-```
-
-* Secure pages only for openid logged in users:
-
-```yml
-    access_control:
-        - { path: ^/demo/secured/openid, role: IS_AUTHENTICATED_OPENID }
-```
+When reporting a bug, it may be a good idea to reproduce it in a basic project
+built using the [Symfony Standard Edition](https://github.com/symfony/symfony-standard)
+to allow developers of the bundle to reproduce the issue by simply cloning it
+and following some steps.
