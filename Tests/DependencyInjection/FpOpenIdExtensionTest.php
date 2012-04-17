@@ -104,4 +104,29 @@ class FpOpenIdExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new FpOpenIdExtension();
         $extension->load($configs, $containerBuilder);
     }
+
+    /**
+     * @test
+     */
+    public function shouldAddTemplateEngineParameterToContainerBuilder()
+    {
+        $expectedTemplateEngine = 'the_engine';
+
+        $config = array(
+            'template' => array(
+                'engine' => $expectedTemplateEngine
+            )
+        );
+        $configs = array($config);
+
+        $containerBuilder = new ContainerBuilder(new ParameterBag);
+        //guard
+        $this->assertFalse($containerBuilder->hasParameter('fp_openid.template.engine'));
+
+        $extension = new FpOpenIdExtension();
+        $extension->load($configs, $containerBuilder);
+
+        $this->assertTrue($containerBuilder->hasParameter('fp_openid.template.engine'));
+        $this->assertEquals($expectedTemplateEngine, $containerBuilder->getParameter('fp_openid.template.engine'));
+    }
 }

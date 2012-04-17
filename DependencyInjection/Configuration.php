@@ -2,6 +2,7 @@
 namespace Fp\OpenIdBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
@@ -22,6 +23,24 @@ class Configuration implements ConfigurationInterface
             ->end()
         ;
 
+        $this->addTemplateSection($rootNode);
+
         return $treeBuilder;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $node
+     */
+    private function addTemplateSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->arrayNode('template')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('engine')->defaultValue('twig')->end()
+                ->end()
+            ->end()
+        ->end();
     }
 }

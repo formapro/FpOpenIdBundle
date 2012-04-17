@@ -1,0 +1,14 @@
+{% extends "FpOpenIdBundle::layout.html.twig" %}
+
+{% block fp_openid_content %}
+    {% if error %}
+        <div>{{ error }}</div>
+    {% endif %}
+
+    <form action="{{ path("fp_openid_security_check") }}" method="post">
+        <label for="openid_identifier">Identifier: </label>
+        <input type="text" id="openid_identifier" name="openid_identifier" value="" />
+
+        <input type="submit" id="_submit" name="_submit" value="Login" />
+    </form>
+{% endblock fp_openid_content %}

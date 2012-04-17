@@ -97,6 +97,47 @@ class ConfigurationTest extends  \PHPUnit_Framework_TestCase
         $this->processConfiguration($config);
     }
 
+    /**
+     * @test
+     */
+    public function shouldAllowToSetTemplateEngine()
+    {
+        $config = array('fp_open_id' => array(
+            'template' => array('engine' => 'foo')
+        ));
+
+        $this->processConfiguration($config);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAddTwgiAsDefaultTemplateEngine()
+    {
+        $config = array('fp_open_id' => array());
+
+        $processedConfig = $this->processConfiguration($config);
+
+        $this->assertArrayHasKey('template', $processedConfig);
+        $this->assertArrayHasKey('engine', $processedConfig['template']);
+        $this->assertEquals('twig', $processedConfig['template']['engine']);
+    }
+
+    /**
+     * @test
+     *
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidTypeException
+     * @expectedExceptionMessage Invalid type for path "fp_open_id.template.engine". Expected scalar, but got array.
+     */
+    public function throwIfTemplateEngineNotScalar()
+    {
+        $config = array('fp_open_id' => array(
+            'template' => array('engine' => array())
+        ));
+
+        $this->processConfiguration($config);
+    }
+
     protected function processConfiguration(array $configs)
     {
         $configuration = new Configuration();
