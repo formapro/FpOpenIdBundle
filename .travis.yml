@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+
+before_script:
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install
+
+branches:
+  only:
+    new-version
+
+script: phpunit -c Tests/phpunit.xml.dist
+
+notifications:
+  email:
+    - kotlyar.maksim@gmail.com

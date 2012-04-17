@@ -2,6 +2,7 @@
 namespace Fp\OpenIdBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
@@ -17,41 +18,29 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('provider')->isRequired()->cannotBeEmpty()
-                    ->children()
-                        ->scalarNode('return_route')->isRequired()->cannotBeEmpty()->end()
-                        ->scalarNode('cancel_route')->isRequired()->cannotBeEmpty()->end()
-                        ->scalarNode('approve_route')->defaultNull()->end()
-                        ->arrayNode('roles')
-                            ->isRequired()
-                            ->cannotBeEmpty()
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')->end()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('consumers')
-                    ->requiresAtLeastOneElement()
-                    ->useAttributeAsKey('name')
-                    ->prototype('array')
-                        ->addDefaultsIfNotSet()
-                        ->children()
-                            ->arrayNode('required')
-                                ->useAttributeAsKey('name')
-                                ->prototype('scalar')->end()
-                            ->end()
-                            ->arrayNode('optional')
-                                ->useAttributeAsKey('name')
-                                ->prototype('scalar')->end()
-                            ->end()
-                            ->scalarNode('trust_root')->defaultValue('from_request')->cannotBeEmpty()->end()
-                            ->scalarNode('default')->defaultFalse()->end()
-                        ->end()
-                    ->end()
-                ->end()
+                ->scalarNode('db_driver')->defaultNull()->end()
+                ->scalarNode('identity_class')->defaultNull()->end()
             ->end()
         ;
 
+        $this->addTemplateSection($rootNode);
+
         return $treeBuilder;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $node
+     */
+    private function addTemplateSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->arrayNode('template')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('engine')->defaultValue('twig')->end()
+                ->end()
+            ->end()
+        ->end();
     }
 }

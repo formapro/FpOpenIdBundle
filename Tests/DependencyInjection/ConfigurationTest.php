@@ -7,125 +7,135 @@ use Fp\OpenIdBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends  \PHPUnit_Framework_TestCase
 {
-    protected $fullConfigs = array();
-
-    public function setUp()
+    /**
+     * @test
+     */
+    public function shouldAllowToUseWithoutAnyRequiredConfiguration()
     {
-        $this->fullConfigs = array('fp_open_id' => array(
-            'provider' => array(
-                'return_route' => 'http://foo.bar/return',
-                'cancel_route' => 'http://foo.bar/cancel',
-                'approve_route' => 'http://foo.bar/approve',
-                'roles' => array(
-                    'user',
-                    'publisher',
-                    'manager'
-                ),
-            ),
-            'consumers' => array(
-                'light_open_id' => array(
-                    'required' => array(
-                        'contact/email',
-                        'namePerson/first',
-                        'namePerson/last',
-                    ),
-                    'optional' => array(
-                        'foo' => 'bar',
-                        'bar' => 'foo',
-                    ),
-                    'trust_root' => 'http://foo.bar',
-                    'default' => true,
-                ),
-                'another_one' => true
-            ),
+        $emptyConfig = array();
+
+        $this->processConfiguration($emptyConfig);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAllowToSetScalarDbDriver()
+    {
+        $config = array('fp_open_id' => array(
+            'db_driver' => 'foo'
         ));
+
+        $this->processConfiguration($config);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSetNullAsDefaultDbDriver()
+    {
+        $config = array('fp_open_id' => array());
+
+        $processedConfig = $this->processConfiguration($config);
+
+        $this->assertArrayHasKey('db_driver', $processedConfig);
+        $this->assertNull($processedConfig['db_driver']);
     }
 
     /**
      * @test
      *
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "provider" at path "fp_open_id" must be configured.
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidTypeException
+     * @expectedExceptionMessage Invalid type for path "fp_open_id.db_driver". Expected scalar, but got array.
      */
-    public function shouldThrowOnEmptyConfig()
+    public function throwIfDbDriverNotScalar()
     {
-        $this->processConfiguration(array());
+        $config = array('fp_open_id' => array(
+            'db_driver' => array()
+        ));
+
+        $this->processConfiguration($config);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAllowToSetIdentityClass()
+    {
+        $config = array('fp_open_id' => array(
+            'identity_class' => 'foo'
+        ));
+
+        $this->processConfiguration($config);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSetNullAsDefaultIdentityClass()
+    {
+        $config = array('fp_open_id' => array());
+
+        $processedConfig = $this->processConfiguration($config);
+
+        $this->assertArrayHasKey('identity_class', $processedConfig);
+        $this->assertNull($processedConfig['identity_class']);
     }
 
     /**
      * @test
      *
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "provider" at path "fp_open_id" must be configured.
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidTypeException
+     * @expectedExceptionMessage Invalid type for path "fp_open_id.identity_class". Expected scalar, but got array.
      */
-    public function shouldRequireProviderNode()
+    public function throwIfIdentityClassNotScalar()
     {
-        unset($this->fullConfigs['fp_open_id']['provider']);
+        $config = array('fp_open_id' => array(
+            'identity_class' => array()
+        ));
 
-        $this->processConfiguration($this->fullConfigs);
+        $this->processConfiguration($config);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAllowToSetTemplateEngine()
+    {
+        $config = array('fp_open_id' => array(
+            'template' => array('engine' => 'foo')
+        ));
+
+        $this->processConfiguration($config);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAddTwgiAsDefaultTemplateEngine()
+    {
+        $config = array('fp_open_id' => array());
+
+        $processedConfig = $this->processConfiguration($config);
+
+        $this->assertArrayHasKey('template', $processedConfig);
+        $this->assertArrayHasKey('engine', $processedConfig['template']);
+        $this->assertEquals('twig', $processedConfig['template']['engine']);
     }
 
     /**
      * @test
      *
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "consumers" at path "fp_open_id" must be configured.
+     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidTypeException
+     * @expectedExceptionMessage Invalid type for path "fp_open_id.template.engine". Expected scalar, but got array.
      */
-    public function shouldRequireConsumersNode()
+    public function throwIfTemplateEngineNotScalar()
     {
-        unset($this->fullConfigs['fp_open_id']['consumers']);
+        $config = array('fp_open_id' => array(
+            'template' => array('engine' => array())
+        ));
 
-        $this->processConfiguration($this->fullConfigs);
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "return_route" at path "fp_open_id.provider" must be configured.
-     */
-    public function shouldRequireReturnRouteNode()
-    {
-        unset($this->fullConfigs['fp_open_id']['provider']['return_route']);
-
-        $this->processConfiguration($this->fullConfigs);
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The path "fp_open_id.provider.return_route" cannot contain an empty value, but got null.
-     */
-    public function shouldNotBeEmptyReturnRouteNode()
-    {
-        $this->fullConfigs['fp_open_id']['provider']['return_route'] = null;
-
-        $this->processConfiguration($this->fullConfigs);
-    }
-
-
-    /**
-     * @test
-     */
-    public function shouldBeOptionalApproveRouteNode()
-    {
-        $this->fullConfigs['fp_open_id']['provider']['approve_route'] = null;
-
-        $this->processConfiguration($this->fullConfigs);
-    }
-
-    /**
-     * @test
-     *
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "roles" at path "fp_open_id.provider" must be configured.
-     */
-    public function shouldRequireRolesNode()
-    {
-        unset($this->fullConfigs['fp_open_id']['provider']['roles']);
-
-        $this->processConfiguration($this->fullConfigs);
+        $this->processConfiguration($config);
     }
 
     protected function processConfiguration(array $configs)

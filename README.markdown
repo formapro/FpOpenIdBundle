@@ -1,4 +1,4 @@
-# Overview
+# Overview [![Build Status](https://secure.travis-ci.org/formapro/FpOpenIdBundle.png?branch=new-version)](http://travis-ci.org/formapro/FpOpenIdBundle)
 
 Integrates OpenId feature to symfony's security layer.
 Supports these 3rd party libraries:
@@ -11,121 +11,126 @@ Supports these 3rd party libraries:
 
 * Setup [LightOpenId](http://gitorious.org/lightopenid)
 
-        git submodule add git://gitorious.org/lightopenid/lightopenid.git /path/to/vendor/LightOpenId
+```
+git submodule add git://gitorious.org/lightopenid/lightopenid.git /path/to/vendor/LightOpenId
+```
 
 * Setup Bundle
 
-        git submodule add git@github.com:formapro/FpOpenIdBundle.git /path/to/vendor/bundles/Fp/OpenIdBundle
+```
+git submodule add git@github.com:formapro/FpOpenIdBundle.git /path/to/vendor/bundles/Fp/OpenIdBundle
+```
 
 * Configure autioload.php
 
-        use Symfony\Component\ClassLoader\UniversalClassLoader;
-        use Symfony\Component\ClassLoader\MapClassLoader;
+```php
+<?php
 
-        $universalLoader = new UniversalClassLoader;
-        $universalLoader->registerNamespaces(array(
-            'Fp' => '/path/to/vendor/bundles'
-        ));
+use Symfony\Component\ClassLoader\UniversalClassLoader;
+use Symfony\Component\ClassLoader\MapClassLoader;
 
-        $universalLoader->register();
+$universalLoader = new UniversalClassLoader;
+$universalLoader->registerNamespaces(array(
+    'Fp' => '/path/to/vendor/bundles'
+));
 
-        $mapLoader = new MapClassLoader(array(
-            'LightOpenID' => '/path/to/venodr/LightOpenId/openid.php'
-        ));
+$universalLoader->register();
 
-        $mapLoader->register();
+$mapLoader = new MapClassLoader(array(
+    'LightOpenID' => '/path/to/venodr/LightOpenId/openid.php'
+));
+
+$mapLoader->register();
+```
 
 * Configure AppKernel.php
 
-        class AppKernel extends Kernel
-        {
-            public function registerBundles()
-            {
-                $bundles = array(
-                    new Fp\OpenIdBundle\FpOpenIdBundle()
-                );
-            }
-        }
+```php
+<?php
 
-* Configure the bundle
+class AppKernel extends Kernel
+{
+    public function registerBundles()
+    {
+        $bundles = array(
+            new Fp\OpenIdBundle\FpOpenIdBundle()
+        );
+    }
+}
+```
 
-        fp_open_id:
-            provider:
-                return_route:             'login_check_route'
-                roles:                    [ROLE_USER]
+* Full openid firewall configuration
 
-           consumers:
-                light_open_id:
-                    trust_root:           'example.com'
+```yml
 
-* Configure security bundle
+firewalls:
+    secured_area:
+        pattern:              ^/
+        anonymous:            ~
+        logout:
+            path:             /logout
+            target:           /
+        fp_openid:
+            relying_party:                  fp_openid.relying_party.default
+            required_parameters:
+                - contact/email
+                - namePerson/first
+            optional_parameters:
+                - namePerson/last
+            required_parameters:
+            check_path:                     /login_check
+            login_path:                     /login',
+            always_use_default_target_path: false
+            default_target_path:            /
+            target_path_parameter:          _target_path
+            use_referer:                    false
+            failure_path:                   null
+            failure_forward:                false
 
-        security:
-            factories:
-                -                         /path/to/vendor/bundles/Fp/OpenIdBundle/Resources/config/security_factories.xml
+```
 
-            firewalls:
-                secured_area:
-                    pattern:              ^/
-                    anonymous:            ~
-                    logout:
-                        path:             /logout
-                        target:           /
-                    openid:               true
+* Try it with google:
 
-* Render simple form
+```
+https://www.google.com/accounts/o8/id
+```
 
-        {% render "FpOpenIdBundle:OpenId:simpleForm" %}
+* Getting user information from openid provider:
 
-* Try it with:
+**Pay attention to that fact that an openid provider is not required to return any data, you can get nothing even if you set it required**
 
-        https://www.google.com/accounts/o8/id
+Request parameters:
 
-# Manual
+```yml
 
-## Request for additional parameters:
+firewalls:
+    secured_area:
+        fp_openid:
+            required_parameters:
+                - contact/email
+                - namePerson/first
+            optional_parameters:
+                - namePerson/last
+```
 
-* Define options you want to request:
+Get them from token:
 
-        fp_open_id:
-            consumers:
-                light_open_id
-                    required:             [ contact/email ]
-                    optional:             [ namePerson, namePerson/first ]
+```php
+<?php
 
-* After success registration you can fetch them from the token:
+/**
+ * @var $securityContext \Symfony\Component\Security\Core\SecurityContextInterface
+ */
+$attributes = $securityContext->getToken()->getAttributes();
 
-        $token->getAttribute('contact/email');
-        $token->getAttribute('namePerson/first');
+if (isset($attributes['contact/email'])) {
+    echo $attributes['contact/email'];
+}
+```
 
-## Post auth action
+* Secure pages only for openid logged in users:
 
-* Define a route for post auth operations:
-
-        fp_open_id:
-            provider:
-                approve_route:            'openid_approve_user'
-
-            consumers:
-                light_open_id
-                    required:             [ contact/email ]
-
-* Create an action which do post auth job:
-
-        public function approveUserAccount($request)
-        {
-            $tokenPersister = $this->get('fp_openid.security.authentication.token_persister');
-
-            $token = $tokenPersister->get();
-
-            $user = $this->get('user.repository')->findBy(array('email' => $token->getAttribute('contact/email')));
-
-            // IMPORTANT: It is required to set a user to token (UserInterface)
-            $newToken = new OpenIdToken($token->getIdentifier(), $user->getRoles());
-            $newToken->setUser($user);
-
-            $tokenPersister->set($newToken);
-
-            // IMPORTANT: It is required make a redirect to `login_check` with parameter `openid_approved`
-            return $this->redirect($this->generateUrl('login_check_route', array('openid_approved' => 1)));
-        }
+```yml
+    access_control:
+        - { path: ^/demo/secured/openid, role: IS_AUTHENTICATED_OPENID }
+```

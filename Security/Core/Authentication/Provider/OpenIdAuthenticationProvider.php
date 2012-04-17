@@ -1,127 +1,177 @@
 <?php
 namespace Fp\OpenIdBundle\Security\Core\Authentication\Provider;
 
-use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 
-use Fp\OpenIdBundle\Security\Core\Authentication\Token\TokenPersister;
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
-use Fp\OpenIdBundle\Consumer\ConsumerProvider;
-
+use Fp\OpenIdBundle\Security\Core\User\UserManagerInterface;
+use Fp\OpenIdBundle\Security\Core\Exception\UsernameByIdentityNotFoundException;
 
 class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 {
-    protected $consumerProvider;
-
-    protected $router;
-
-    protected $tokenPersister;
-
+    /**
+     * @var null|\Symfony\Component\Security\Core\User\UserProviderInterface
+     */
     protected $userProvider;
 
-    protected $parameters;
+    /**
+     * @var null|\Symfony\Component\Security\Core\User\UserCheckerInterface
+     */
+    protected $userChecker;
 
-    public function __construct(
-        ConsumerProvider $consumerProvider,
-        RouterInterface $router,
-        TokenPersister $tokenPersister,
-        UserProviderInterface $userProvider,
-        array $parameters
-    ) {
-        $this->consumerProvider = $consumerProvider;
-        $this->router = $router;
-        $this->tokenPersister = $tokenPersister;
+    /**
+     * @var bool
+     */
+    protected $createIfNotExists;
+
+    /**
+     * @param null|\Symfony\Component\Security\Core\User\UserProviderInterface $userProvider
+     * @param null|\Symfony\Component\Security\Core\User\UserCheckerInterface $userChecker
+     * @param bool $createIfNotExists
+     */
+    public function __construct(UserProviderInterface $userProvider = null, UserCheckerInterface $userChecker = null, $createIfNotExists = false)
+    {
+        if (null !== $userProvider && null === $userChecker) {
+            throw new \InvalidArgumentException('$userChecker cannot be null, if $userProvider is not null.');
+        }
+
+        if ($createIfNotExists && !$userProvider instanceof UserManagerInterface) {
+            throw new \InvalidArgumentException('The $userProvider must implement UserManagerInterface if $createIfNotExists is true.');
+        }
+
         $this->userProvider = $userProvider;
-
-        $this->parameters = array_merge(array(
-            'return_route' => null,
-            'approve_route' => null,
-            'roles' => array()), $parameters);
+        $this->userChecker = $userChecker;
+        $this->createIfNotExists = $createIfNotExists;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function authenticate(TokenInterface $token)
     {
         if (false == $this->supports($token)) {
             return null;
         }
 
-        $processState = 'process' . ucfirst($token->getState());
+        if ($token->getUser() instanceof UserInterface) {
+            return $this->createAuthenticatedToken(
+                $token->getIdentity(),
+                $token->getAttributes(),
+                $token->getUser()->getRoles(),
+                $token->getUser()
+            );
+        }
 
-        return $this->$processState($token);
+        try {
+            $user = $this->userProvider ?
+                $this->getProviderUser($token->getIdentity(), $token->getAttributes()) :
+                $this->getDefaultUser($token->getIdentity(), $token->getAttributes())
+            ;
+
+            return $this->createAuthenticatedToken(
+                $token->getIdentity(),
+                $token->getAttributes(),
+                $user instanceof UserInterface ? $user->getRoles() : array(),
+                $user
+            );
+        } catch (AuthenticationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw new AuthenticationServiceException($e->getMessage(), null, (int) $e->getCode(), $e);
+        }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supports(TokenInterface $token)
     {
-        if (false == ($token instanceof OpenIdToken)) {
-            return false;
+        return $token instanceof OpenIdToken;
+    }
+
+    /**
+     * @param string $identity
+     *
+     * @throws \RuntimeException if provider did not provide a user implementation.
+     *
+     * @return \Symfony\Component\Security\Core\User\UserInterface
+     */
+    protected function getProviderUser($identity, array $attributes)
+    {
+        try {
+            $user = $this->userProvider->loadUserByUsername($identity);
+        } catch (UsernameNotFoundException $e) {
+            if (false == $this->createIfNotExists) {
+                throw $e;
+            }
+
+            $user = $this->userProvider->createUserFromIdentity($identity, $attributes);
         }
 
-        return in_array($token->getState(), array('verify', 'complete', 'approved', 'cancel'));
-    }
-
-    public function processVerify(OpenIdToken $token)
-    {
-        $consumer = $this->consumerProvider->provide($token->getIdentifier());
-
-        $token->setAuthenticateUrl(
-            $consumer->authenticateUrl($token->getIdentifier(), $this->getReturnUrl()));
-
-        return $token;
-    }
-
-    public function processComplete(OpenIdToken $token)
-    {
-        $consumer = $this->consumerProvider->provide($token->getIdentifier());
-
-        $attributes = $consumer->complete($token->getResponse(), $this->getReturnUrl());
-
-        $token = new OpenIdToken($attributes['identity'], $this->parameters['roles']);
-        $token->setAttributes($attributes);
-
-        if ($this->parameters['approve_route']) {
-            $this->tokenPersister->set($token);
-            $token->setApproveUrl($this->router->generate($this->parameters['approve_route'], array(), true));
+        if (false == $user instanceof UserInterface) {
+            throw new \RuntimeException('User provider did not return an implementation of user interface.');
         }
 
-        return $token;
+        return $user;
     }
 
-    public function processCancel(OpenIdToken $token)
+    /**
+     * @param \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken $token
+     *
+     * @return string
+     */
+    protected function getDefaultUser($identity, array $attributes)
     {
-        $token->setCancelUrl($this->getCancelUrl());
+        return $identity;
 
-        return $token;
+//        $attributes = array_merge(array(
+//            'contact/email' => null,
+//            'namePerson/first' => null,
+//            'namePerson/last' => null,
+//        ), $attributes);
+//
+//        $username = 'a user';
+//        if ($attributes['contact/email']) {
+//            $username = $attributes['contact/email'];
+//        } else if ($attributes['namePerson/first']) {
+//            $username = $attributes['namePerson/first'];
+//
+//            if ($attributes['namePerson/last']) {
+//                $username .= " {$attributes['namePerson/last']}";
+//            }
+//        }
+//
+//        $provider = parse_url($identity, PHP_URL_HOST);
+//
+//        return "{$username} by {$provider}";
     }
 
-    public function processApproved(OpenIdToken $token)
+    /**
+     * @param string $identity
+     * @param array $attributes
+     * @param array $roles
+     * @param mixed $user
+     *
+     * @return \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken
+     */
+    protected function createAuthenticatedToken($identity, array $attributes, array $roles, $user)
     {
-        $token = $this->tokenPersister->get();
-        if (false == $token) {
-            throw new \RuntimeException('The token persister does not contains a token');
+        if ($user instanceof UserInterface) {
+            $this->userChecker->checkPostAuth($user);
         }
-        if (false == $token->getUser()) {
-            throw new AuthenticationException('Authentication approving was canceled');
-        }
 
-        $token->setUser($this->userProvider->refreshUser($token->getUser()));
+        $newToken = new OpenIdToken($identity, $roles);
+        $newToken->setUser($user);
+        $newToken->setAttributes($attributes);
+        $newToken->setAuthenticated(true);
 
-        return $token;
-    }
-
-    protected function getReturnUrl()
-    {
-        $route = $this->parameters['return_route'];
-
-        return $this->router->generate($route, array(), true);
-    }
-
-    protected function getCancelUrl()
-    {
-        $route = $this->parameters['cancel_route'];
-
-        return $this->router->generate($route, array(), true);
+        return $newToken;
     }
 }
