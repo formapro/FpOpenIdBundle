@@ -10,7 +10,7 @@ before_script:
 
 branches:
   only:
-    new-version
+    master
 
 script: phpunit -c Tests/phpunit.xml.dist
 
