@@ -1,5 +1,5 @@
-Simple User Provider
-====================
+Configure User Manager\Provider
+===============================
 
 If you want to have a user in the token you have to configure user provider. It could be done in several ways.
 Here will be described a way when a user can be created in the code.

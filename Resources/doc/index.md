@@ -135,5 +135,5 @@ of the bundle.
 
 The following documents are available:
 
-- [Simple user provider](simple_user_provider.md)
+- [Configure User Manager\Provider](configure_user_manager.md)
 - [Configuration Reference](configuration_reference.md)
