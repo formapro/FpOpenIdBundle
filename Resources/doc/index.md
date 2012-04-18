@@ -135,4 +135,5 @@ of the bundle.
 
 The following documents are available:
 
+- [Configure User Manager\Provider](configure_user_manager.md)
 - [Configuration Reference](configuration_reference.md)
