@@ -12,8 +12,6 @@ branches:
   only:
     master
 
-script: phpunit -c Tests/phpunit.xml.dist
-
 notifications:
   email:
     - kotlyar.maksim@gmail.com
