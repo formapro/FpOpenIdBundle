@@ -20,8 +20,8 @@ class LightOpenIdRelyingParty extends AbstractRelyingParty
 
         $lightOpenId->identity = $this->guessIdentifier($request);
         $lightOpenId->returnUrl = $this->guessReturnUrl($request);
-        $lightOpenId->required = $this->guessRequiredParameters($request);
-        $lightOpenId->optional = $this->guessOptionalParameters($request);
+        $lightOpenId->required = $this->guessRequiredAttributes($request);
+        $lightOpenId->optional = $this->guessOptionalAttributes($request);
 
         return new RedirectResponse($lightOpenId->authUrl());
     }
