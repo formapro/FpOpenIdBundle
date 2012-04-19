@@ -65,7 +65,7 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
      */
     protected function guessTrustRoot(Request $request)
     {
-        return $request->attributes->get('openid_trust_root', $request->getHttpHost());
+        return $request->attributes->get('trust_root', $request->getHttpHost());
     }
 
     /**
@@ -93,9 +93,9 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
      *
      * @return string
      */
-    protected function guessRequiredParameters(Request $request)
+    protected function guessRequiredAttributes(Request $request)
     {
-        return $request->get('openid_required_parameters', array());
+        return $request->get('required_attributes', array());
     }
 
     /**
@@ -103,8 +103,8 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
     *
     * @return string
     */
-    protected function guessOptionalParameters(Request $request)
+    protected function guessOptionalAttributes(Request $request)
     {
-        return $request->get('openid_optional_parameters', array());
+        return $request->get('optional_attributes', array());
     }
 }
