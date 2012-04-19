@@ -4,6 +4,7 @@ namespace Fp\OpenIdBundle\Tests\Security\Http\Firewall;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 use Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener;
 use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
@@ -148,6 +149,96 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $listener->setRelyingParty($relyingPartyMock);
 
         $listener->handle($eventMock);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAddRequiredAttributesToDuplicatedRequest()
+    {
+        $expectedRequiredAttributes = array(
+            'foo' => 'foo',
+            'bar' => 'bar'
+        );
+
+        $duplicatedRequestMock = $this->createRequestMock();
+        $duplicatedRequestMock->attributes = new ParameterBag();
+
+        $requestMock = $this->createRequestStub(
+            $hasSessionReturn = true,
+            $hasPreviousSessionReturn = true,
+            $duplicateReturn = $duplicatedRequestMock
+        );
+
+        $relyingPartyMock = $this->createRelyingPartyStub(
+            $supportsReturn = true,
+            $manageReturn = new RedirectResponse('http://example.com/openid-provider')
+        );
+
+        $eventMock = $this->createGetResponseEventStub($requestMock);
+
+        $listener = new OpenIdAuthenticationListener(
+            $this->createSecurityContextMock(),
+            $this->createAuthenticationManagerMock(),
+            $this->createSessionAuthenticationStrategyMock(),
+            $this->createHttpUtilsStub($checkRequestPathReturn = true),
+            'providerKey',
+            $options = array('required_attributes' => $expectedRequiredAttributes)
+        );
+
+        $listener->setRelyingParty($relyingPartyMock);
+
+        $listener->handle($eventMock);
+
+        $this->assertSame(
+            $expectedRequiredAttributes,
+            $duplicatedRequestMock->attributes->get('required_attributes')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAddOptionalAttributesToDuplicatedRequest()
+    {
+        $expectedOptionalAttributes = array(
+            'foo' => 'foo',
+            'bar' => 'bar'
+        );
+
+        $duplicatedRequestMock = $this->createRequestMock();
+        $duplicatedRequestMock->attributes = new ParameterBag();
+
+        $requestMock = $this->createRequestStub(
+            $hasSessionReturn = true,
+            $hasPreviousSessionReturn = true,
+            $duplicateReturn = $duplicatedRequestMock
+        );
+
+        $relyingPartyMock = $this->createRelyingPartyStub(
+            $supportsReturn = true,
+            $manageReturn = new RedirectResponse('http://example.com/openid-provider')
+        );
+
+        $eventMock = $this->createGetResponseEventStub($requestMock);
+
+        $listener = new OpenIdAuthenticationListener(
+            $this->createSecurityContextMock(),
+            $this->createAuthenticationManagerMock(),
+            $this->createSessionAuthenticationStrategyMock(),
+            $this->createHttpUtilsStub($checkRequestPathReturn = true),
+            'providerKey',
+            $options = array('optional_attributes' => $expectedOptionalAttributes)
+        );
+
+        $listener->setRelyingParty($relyingPartyMock);
+
+        $listener->handle($eventMock);
+
+        $this->assertSame(
+            $expectedOptionalAttributes,
+            $duplicatedRequestMock->attributes->get('optional_attributes')
+        );
     }
 
     /**
