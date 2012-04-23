@@ -40,12 +40,19 @@ About
 FpOpenIdBundle is a [formapro](https://github.com/formapro) initiative.
 See also the list of [contributors](https://github.com/formapro/FpOpenIdBundle/contributors).
 
+Credits
+-------
+
+* [nurikabe](https://github.com/nurikabe) for very early feedback.
+* [klebba](https://github.com/klebba) for suggestions to new version.
+* [Koc](https://github.com/Koc) for point me out to a very good UserProvider implementation.
+* The first versions inspired by [OpenIDAuthBundle](https://github.com/KainHaart/OpenIDAuthBundle).
+* `UserManager` inspired by [FOSOAuthServerBundle](https://github.com/FriendsOfSymfony/FOSOAuthServerBundle) bundle.
+* Installation doc adapted from [FOSUserBundle](https://github.com/FriendsOfSymfony/FOSUserBundle) doc.
+* [formapro](https://github.com/formapro) for supporting open source ideas.
+
 Reporting an issue or a feature request
 ---------------------------------------
 
-Issues and feature requests are tracked in the [Github issue tracker](https://github.com/formapro/FpOpenIdBundle/issues).
-
-When reporting a bug, it may be a good idea to reproduce it in a basic project
-built using the [Symfony Standard Edition](https://github.com/symfony/symfony-standard)
-to allow developers of the bundle to reproduce the issue by simply cloning it
-and following some steps.
+Issues and feature requests are tracked in the [Github issue tracker](https://github.com/formapro/FpOpenIdBundle/issues). 
+Read this [note](https://github.com/formapro/FpOpenIdBundle/blob/readme-credits-tests/Resources/doc/run_bundle_tests.md) to find out how to run the bundle's tests.
