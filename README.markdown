@@ -49,10 +49,10 @@ Credits
 * The first versions inspired by [OpenIDAuthBundle](https://github.com/KainHaart/OpenIDAuthBundle).
 * `UserManager` inspired by [FOSOAuthServerBundle](https://github.com/FriendsOfSymfony/FOSOAuthServerBundle) bundle.
 * Installation doc adapted from [FOSUserBundle](https://github.com/FriendsOfSymfony/FOSUserBundle) doc.
-* [formapro](https://github.com/formapro) for supporting open source ideas.
+* [formapro](https://github.com/formapro) for supporting open source movement.
 
 Reporting an issue or a feature request
 ---------------------------------------
 
 Issues and feature requests are tracked in the [Github issue tracker](https://github.com/formapro/FpOpenIdBundle/issues). 
-Read this [note](https://github.com/formapro/FpOpenIdBundle/blob/readme-credits-tests/Resources/doc/run_bundle_tests.md) to find out how to run the bundle's tests.
+Read this [note](https://github.com/formapro/FpOpenIdBundle/blob/master/Resources/doc/run_bundle_tests.md) to find out how to run the bundle's tests.
