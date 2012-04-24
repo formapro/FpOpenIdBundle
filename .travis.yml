@@ -8,11 +8,6 @@ before_script:
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install
 
-branches:
-  only:
-    - master
-    - 1.2
-
 notifications:
   email:
     - kotlyar.maksim@gmail.com
