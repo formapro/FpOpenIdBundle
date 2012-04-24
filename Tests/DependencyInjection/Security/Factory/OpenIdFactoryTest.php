@@ -49,7 +49,8 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory->addConfiguration($treeBuilder->root('name'));
 
-        $childeren = $treeBuilder->buildTree()->getChildren();
+        
+        $childeren = $this->readAttribute($treeBuilder->buildTree(), 'children');
 
         $this->assertArrayHasKey('create_user_if_not_exists', $childeren);
 
@@ -68,7 +69,7 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory->addConfiguration($treeBuilder->root('name'));
 
-        $childeren = $treeBuilder->buildTree()->getChildren();
+        $childeren = $this->readAttribute($treeBuilder->buildTree(), 'children');
 
         $this->assertArrayHasKey('required_attributes', $childeren);
 
@@ -87,7 +88,7 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory->addConfiguration($treeBuilder->root('name'));
 
-        $childeren = $treeBuilder->buildTree()->getChildren();
+        $childeren = $this->readAttribute($treeBuilder->buildTree(), 'children');
 
         $this->assertArrayHasKey('optional_attributes', $childeren);
 
@@ -106,7 +107,7 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory->addConfiguration($treeBuilder->root('name'));
 
-        $childeren = $treeBuilder->buildTree()->getChildren();
+        $childeren = $this->readAttribute($treeBuilder->buildTree(), 'children');
 
         $this->assertArrayHasKey('relying_party', $childeren);
 
@@ -125,7 +126,7 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory->addConfiguration($treeBuilder->root('name'));
 
-        $childeren = $treeBuilder->buildTree()->getChildren();
+        $childeren = $this->readAttribute($treeBuilder->buildTree(), 'children');
 
         $this->assertArrayHasKey('login_path', $childeren);
 

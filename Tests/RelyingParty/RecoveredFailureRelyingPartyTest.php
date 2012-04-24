@@ -189,7 +189,7 @@ class RecoveredFailureRelyingPartyTest extends \PHPUnit_Framework_TestCase
 
     public function createSessionMock()
     {
-        return $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
+        return $this->getMock('Symfony\Component\HttpFoundation\Session', array(), array(), '', false);
     }
 
     public function createSessionStub($returnGet = null)

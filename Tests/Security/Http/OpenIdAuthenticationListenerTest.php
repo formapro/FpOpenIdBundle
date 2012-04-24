@@ -534,9 +534,9 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         return $requestMock;
     }
 
-    protected function createSessionMock()
+    public function createSessionMock()
     {
-        return $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
+        return $this->getMock('Symfony\Component\HttpFoundation\Session', array(), array(), '', false);
     }
 
     protected function createSecurityContextMock()
