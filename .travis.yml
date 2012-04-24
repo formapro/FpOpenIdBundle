@@ -10,8 +10,8 @@ before_script:
 
 branches:
   only:
-    master
-    1.2
+    - master
+    - 1.2
 
 notifications:
   email:
