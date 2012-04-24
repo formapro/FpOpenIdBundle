@@ -17,6 +17,11 @@ use Fp\OpenIdBundle\Security\Core\Exception\UsernameByIdentityNotFoundException;
 class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 {
     /**
+     * @var string
+     */
+    protected $providerKey;
+
+    /**
      * @var null|\Symfony\Component\Security\Core\User\UserProviderInterface
      */
     protected $userProvider;
@@ -36,7 +41,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
      * @param null|\Symfony\Component\Security\Core\User\UserCheckerInterface $userChecker
      * @param bool $createIfNotExists
      */
-    public function __construct(UserProviderInterface $userProvider = null, UserCheckerInterface $userChecker = null, $createIfNotExists = false)
+    public function __construct($providerKey, UserProviderInterface $userProvider = null, UserCheckerInterface $userChecker = null, $createIfNotExists = false)
     {
         if (null !== $userProvider && null === $userChecker) {
             throw new \InvalidArgumentException('$userChecker cannot be null, if $userProvider is not null.');
@@ -46,6 +51,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
             throw new \InvalidArgumentException('The $userProvider must implement UserManagerInterface if $createIfNotExists is true.');
         }
 
+        $this->providerKey = $providerKey;
         $this->userProvider = $userProvider;
         $this->userChecker = $userChecker;
         $this->createIfNotExists = $createIfNotExists;
@@ -93,7 +99,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
      */
     public function supports(TokenInterface $token)
     {
-        return $token instanceof OpenIdToken;
+        return $token instanceof OpenIdToken && $this->providerKey === $token->getProviderKey();
     }
 
     /**
@@ -167,7 +173,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
             $this->userChecker->checkPostAuth($user);
         }
 
-        $newToken = new OpenIdToken($identity, $roles);
+        $newToken = new OpenIdToken($this->providerKey, $identity, $roles);
         $newToken->setUser($user);
         $newToken->setAttributes($attributes);
         $newToken->setAuthenticated(true);

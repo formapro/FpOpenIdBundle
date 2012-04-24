@@ -429,7 +429,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldAddOpenIdTokenToSecurityContextIfSuccessfullyAuthenticated()
     {
-        $expectedToken = new OpenIdToken('identity');
+        $providerKey = 'main';
+        $expectedToken = new OpenIdToken($providerKey, 'identity');
 
         $requestMock = $this->createRequestStub(
             $hasSessionReturn = true,

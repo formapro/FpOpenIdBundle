@@ -33,7 +33,7 @@ class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
         }
 
         if ($result instanceof IdentityProviderResponse) {
-            $token = new OpenIdToken($result->getIdentity());
+            $token = new OpenIdToken($this->providerKey, $result->getIdentity());
             $token->setAttributes($result->getAttributes());
 
             try {
