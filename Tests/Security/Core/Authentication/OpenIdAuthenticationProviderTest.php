@@ -17,7 +17,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function couldBeConstructedWithoutAnyArguments()
     {
-        new OpenIdAuthenticationProvider();
+        new OpenIdAuthenticationProvider($providerKey = 'main');
     }
 
     /**
@@ -26,6 +26,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     public function couldBeConstructedWithUserProviderAndUserChecker()
     {
         new OpenIdAuthenticationProvider(
+            $providerKey = 'main',
             $this->createUserProviderMock(),
             $this->createUserCheckerMock()
         );
@@ -37,6 +38,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     public function couldBeConstructedWithUserManagerUserCheckerAndCreateIfNotExistSetTrue()
     {
         new OpenIdAuthenticationProvider(
+            $providerKey = 'main',
             $this->createUserManagerMock(),
             $this->createUserCheckerMock(),
             $createIfNotExist = true
@@ -52,6 +54,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     public function throwIfTryConstructWithUserProviderButWithoutUserChecker()
     {
         new OpenIdAuthenticationProvider(
+            $providerKey = 'main',
             $this->createUserManagerMock(),
             $userChecker = null
         );
@@ -66,6 +69,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     public function throwIfTryConstructWithoutUserManagerButWithCreateUserIfNotExistSetTrue()
     {
         new OpenIdAuthenticationProvider(
+            $providerKey = 'main',
             $userProvider = null,
             $userChecker = null,
             $createIfNotExist = true
@@ -77,9 +81,10 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldSupportOpenIdToken()
     {
-        $authProvider = new OpenIdAuthenticationProvider();
+        $providerKey = 'main';
+        $authProvider = new OpenIdAuthenticationProvider($providerKey);
 
-        $this->assertTrue($authProvider->supports(new OpenIdToken('identity')));
+        $this->assertTrue($authProvider->supports(new OpenIdToken($providerKey, 'identity')));
     }
 
     /**
@@ -87,26 +92,35 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldNotSupportNoneOpenIdToken()
     {
-        $authProvider = new OpenIdAuthenticationProvider();
+        $authProvider = new OpenIdAuthenticationProvider('main');
 
         $noneOpenIdToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $this->assertFalse($authProvider->supports($noneOpenIdToken));
+        $this->assertNull($authProvider->authenticate($noneOpenIdToken));
     }
 
     /**
      * @test
      */
-    public function shouldReturnNullIfAuthenticationCallWithNoneSupportedToken()
+    public function shouldNotSupportOpenIdTokenIfProviderKeyDiffers()
     {
-        $authProvider = new OpenIdAuthenticationProvider();
+        $providerKeyForProvider = 'main';
+        $providerKeyForToken    = 'connect';
 
-        $noneOpenIdToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $authProvider = new OpenIdAuthenticationProvider($providerKeyForProvider);
+        $token = new OpenIdToken($providerKeyForToken, 'identity');
 
-        //guard
-        $this->assertFalse($authProvider->supports($noneOpenIdToken));
+        $this->assertFalse($authProvider->supports($token));
+        $this->assertNull($authProvider->authenticate($token));
+    }
 
-        $this->assertNull($authProvider->authenticate($noneOpenIdToken));
+    public function testThatProviderKeyIsNotEmptyAfterDeserialization()
+    {
+        $providerKey = 'main';
+        $token = unserialize(serialize(new OpenIdToken($providerKey, 'identity')));
+
+        $this->assertEquals($providerKey, $token->getProviderKey());
     }
 
     /**
@@ -114,6 +128,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateAuthenticatedTokenUsingUserAndHisRolesFromToken()
     {
+        $providerKey = 'main';
         $expectedIdentity = 'the_identity';
         $expectedAttributes = array('foo' => 'foo', 'bar' => 'bar_val');
 
@@ -125,11 +140,12 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
+            $providerKey,
             $userProvider = null,
             $this->createUserCheckerMock()
         );
 
-        $token = new OpenIdToken($expectedIdentity);
+        $token = new OpenIdToken($providerKey, $expectedIdentity);
         $token->setUser($expectedUserMock);
         $token->setAttributes($expectedAttributes);
 
@@ -155,6 +171,8 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateAuthenticatedTokenUsingUserFromTokenAndCallPostAuthCheck()
     {
+        $providerKey = 'main';
+
         $userMock = $this->createUserMock();
         $userMock
             ->expects($this->any())
@@ -170,11 +188,12 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
+            $providerKey,
             $this->createUserProviderMock(),
             $userCheckerMock
         );
 
-        $token = new OpenIdToken('identity');
+        $token = new OpenIdToken($providerKey, 'identity');
         $token->setUser($userMock);
 
         $authenticatedToken = $authProvider->authenticate($token);
@@ -188,12 +207,13 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateAuthenticatedTokenUsingIdentityIfUserProviderNotSet()
     {
+        $providerKey = 'main';
         $expectedIdentity = $expectedUser = 'the_identity';
         $expectedAttributes = array('foo' => 'foo', 'bar' => 'bar_val');
 
-        $authProvider = new OpenIdAuthenticationProvider();
+        $authProvider = new OpenIdAuthenticationProvider($providerKey);
 
-        $token = new OpenIdToken($expectedIdentity);
+        $token = new OpenIdToken($providerKey, $expectedIdentity);
         $token->setUser('');
         $token->setAttributes($expectedAttributes);
 
@@ -213,6 +233,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateAuthenticatedTokenUsingUserProviderAndSearchByIdentity()
     {
+        $providerKey = 'main';
         $expectedIdentity = 'the_identity';
         $expectedAttributes = array('foo' => 'foo', 'bar' => 'bar_val');
 
@@ -232,11 +253,12 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
+            $providerKey,
             $userProviderMock,
             $this->createUserCheckerMock()
         );
 
-        $token = new OpenIdToken($expectedIdentity);
+        $token = new OpenIdToken($providerKey, $expectedIdentity);
         $token->setUser('');
         $token->setAttributes($expectedAttributes);
 
@@ -265,6 +287,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function throwIfUserProviderReturnNotUserInstance()
     {
+        $providerKey = 'main';
         $expectedIdentity = 'the_identity';
 
         $userProviderMock = $this->createUserProviderMock();
@@ -276,11 +299,12 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
+            $providerKey,
             $userProviderMock,
             $this->createUserCheckerMock()
         );
 
-        $token = new OpenIdToken($expectedIdentity);
+        $token = new OpenIdToken($providerKey, $expectedIdentity);
         $token->setUser('');
 
         $authProvider->authenticate($token);
@@ -294,6 +318,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldNotCreateUserIfNotExistIfFlagNotSet()
     {
+        $providerKey = 'main';
         $expectedIdentity = 'the_identity';
 
         $userManagerMock = $this->createUserManagerMock();
@@ -309,12 +334,13 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
+            $providerKey,
             $userManagerMock,
             $this->createUserCheckerMock(),
             $createIfNotExist = false
         );
 
-        $token = new OpenIdToken($expectedIdentity);
+        $token = new OpenIdToken($providerKey, $expectedIdentity);
         $token->setUser('');
 
         $authProvider->authenticate($token);
@@ -325,6 +351,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateAuthenticatedTokenUsingUserManagerCreateFromIdentityMethod()
     {
+        $providerKey = 'main';
         $expectedIdentity = 'the_identity';
         $expectedAttributes = array('foo' => 'foo', 'bar' => 'bar_val');
 
@@ -350,12 +377,13 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
+            $providerKey,
             $userManagerMock,
             $this->createUserCheckerMock(),
             $createIfNotExist = true
         );
 
-        $token = new OpenIdToken($expectedIdentity);
+        $token = new OpenIdToken($providerKey, $expectedIdentity);
         $token->setUser('');
         $token->setAttributes($expectedAttributes);
 
@@ -384,6 +412,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function throwIfUserManagerCreateNotUserInstance()
     {
+        $providerKey = 'main';
         $expectedIdentity = 'the_identity';
 
         $userManagerMock = $this->createUserManagerMock();
@@ -401,12 +430,13 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
+            $providerKey,
             $userManagerMock,
             $this->createUserCheckerMock(),
             $createIfNotExist = true
         );
 
-        $token = new OpenIdToken($expectedIdentity);
+        $token = new OpenIdToken($providerKey, $expectedIdentity);
         $token->setUser('');
 
         $authProvider->authenticate($token);
@@ -417,6 +447,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldWrapAnyThrownExceptionsAsAuthenticatedServiceException()
     {
+        $providerKey = 'main';
         $expectedPreviousException = new \Exception(
             $expectedMessage = 'Something goes wrong',
             $expectedCode = 23
@@ -430,11 +461,12 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
+            $providerKey,
             $userProviderMock,
             $this->createUserCheckerMock()
         );
 
-        $token = new OpenIdToken('identity');
+        $token = new OpenIdToken($providerKey, 'identity');
         $token->setUser('');
 
         try {

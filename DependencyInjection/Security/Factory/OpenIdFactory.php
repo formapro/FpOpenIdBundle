@@ -83,18 +83,23 @@ class OpenIdFactory extends AbstractFactory
     /**
      * {@inheritDoc}
      */
-	protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
+    protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
         $providerId = 'security.authentication.provider.fp_openid.'.$id;
-        $provider = new DefinitionDecorator('security.authentication.provider.fp_openid');
-        $container->setDefinition($providerId, $provider);
+        $provider = $container
+            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.fp_openid'))
+            ->replaceArgument(0, $id);
 
         // with user provider
         if (isset($config['provider'])) {
             $provider
-                ->addArgument(new Reference($userProviderId))
-                ->addArgument(new Reference('security.user_checker'))
-                ->addArgument($config['create_user_if_not_exists'])
+                //TODO: correctrly use addArgument instead of replaceArgument but this doesn't work
+//                ->addArgument(new Reference($userProviderId))
+//                ->addArgument(new Reference('security.user_checker'))
+//                ->addArgument($config['create_user_if_not_exists'])
+                ->replaceArgument(1, new Reference($userProviderId))
+                ->replaceArgument(2, new Reference('security.user_checker'))
+                ->replaceArgument(3, $config['create_user_if_not_exists'])
             ;
         }
 
