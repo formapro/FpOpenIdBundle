@@ -13,7 +13,7 @@ are not supported any more.
 
 **Caution:** This bundle is developed in sync with [symfony's repository](https://github.com/symfony/symfony).
 
-[![Build Status](https://secure.travis-ci.org/formapro/FpOpenIdBundle.png?branch=master)](http://travis-ci.org/formapro/FpOpenIdBundle)
+[![Build Status](https://secure.travis-ci.org/formapro/FpOpenIdBundle.png?branch=1.2)](http://travis-ci.org/formapro/FpOpenIdBundle)
 
 Documentation
 -------------
