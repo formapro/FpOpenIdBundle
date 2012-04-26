@@ -267,10 +267,11 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldNotAddAnyArgumentsToAuthenticationProviderIfProviderNotSetInConfig()
+    public function shouldOnlyAddProviderKeyAsArgumentToAuthenticationProviderIfProviderNotSetInConfig()
     {
+        $expectedProviderKey = 'the_provider_key';
+        
         $containerBuilder = new ContainerBuilder(new ParameterBag());
-        $id = 'main';
 
         $config = array(
             'remember_me' => true,
@@ -280,22 +281,22 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory = new OpenIdFactory();
 
-        list($providerId) = $factory->create($containerBuilder, $id, $config, 'user.provider.id', $defaultEntryPoint = null);
+        list($providerId) = $factory->create($containerBuilder, $expectedProviderKey, $config, 'user.provider.id', $defaultEntryPoint = null);
 
         $this->assertTrue($containerBuilder->hasDefinition($providerId));
 
         $providerDefinition = $containerBuilder->getDefinition($providerId);
 
-        $this->assertEquals($id, $providerDefinition->getArgument(0));
+        $this->assertEquals($expectedProviderKey, $providerDefinition->getArgument(0));
     }
 
     /**
      * @test
      */
-    public function shouldAddUserManagerUserCheckerAndWhetherCreateUserOrNotArgumentsToAuthenticationProviderIfProviderSetInConfig()
+    public function shouldAddProviderKeyUserManagerUserCheckerAndWhetherCreateUserOrNotArgumentsToAuthenticationProviderIfProviderSetInConfig()
     {
         $expectedUserProviderId = 'user.provider.id';
-        $id = 'main';
+        $expectedProviderKey = 'the_provider_key';
         $expectedCreateUserIfNotExists = true;
 
         $containerBuilder = new ContainerBuilder(new ParameterBag());
@@ -310,7 +311,7 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factory = new OpenIdFactory();
 
-        list($providerId) = $factory->create($containerBuilder, $id, $config, 'user.provider.id', $defaultEntryPoint = null);
+        list($providerId) = $factory->create($containerBuilder, $expectedProviderKey, $config, 'user.provider.id', $defaultEntryPoint = null);
 
         $this->assertTrue($containerBuilder->hasDefinition($providerId));
 
@@ -318,7 +319,7 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(4, $providerDefinition->getArguments());
 
-        $this->assertEquals($id, $providerDefinition->getArgument(0));
+        $this->assertEquals($expectedProviderKey, $providerDefinition->getArgument(0));
 
         $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $providerDefinition->getArgument(1));
         $this->assertEquals($expectedUserProviderId, (string) $providerDefinition->getArgument(1));
