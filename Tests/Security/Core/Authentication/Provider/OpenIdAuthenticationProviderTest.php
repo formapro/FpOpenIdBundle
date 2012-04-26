@@ -112,14 +112,6 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($authProvider->supports($token));
     }
 
-    public function testThatProviderKeyIsNotEmptyAfterDeserialization()
-    {
-        $providerKey = 'main';
-        $token = unserialize(serialize(new OpenIdToken($providerKey, 'identity')));
-
-        $this->assertEquals($providerKey, $token->getProviderKey());
-    }
-
     /**
      * @test
      */
