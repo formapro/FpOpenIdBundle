@@ -22,6 +22,7 @@
             public="false"
             abstract="true"
         >
+            <argument /> <!-- Provider-shared Key -->
         </service>
 
         <service
