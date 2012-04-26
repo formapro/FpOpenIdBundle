@@ -9,20 +9,31 @@ class OpenIdToken extends AbstractToken
     /**
      * @var string
      */
-    protected $identity;
+    private $providerKey;
+
+    /**
+     * @var string
+     */
+    private $identity;
 
     /**
      * @param string
      * @param array $attributes
      * @param array $roles
      */
-    public function __construct($identity, array $roles = array())
+    public function __construct($providerKey, $identity, array $roles = array())
     {
         parent::__construct($roles);
 
         $this->setAuthenticated(count($this->getRoles()) > 0);
 
+        $this->providerKey = $providerKey;
         $this->identity = $identity;
+    }
+
+    public function getProviderKey()
+    {
+        return $this->providerKey;
     }
 
     /**
@@ -46,7 +57,7 @@ class OpenIdToken extends AbstractToken
      */
     public function serialize()
     {
-        return serialize(array($this->identity, parent::serialize()));
+        return serialize(array($this->providerKey, $this->identity, parent::serialize()));
     }
 
     /**
@@ -54,7 +65,7 @@ class OpenIdToken extends AbstractToken
      */
     public function unserialize($str)
     {
-        list($this->identity, $parentStr) = unserialize($str);
+        list($this->providerKey, $this->identity, $parentStr) = unserialize($str);
 
         parent::unserialize($parentStr);
     }
