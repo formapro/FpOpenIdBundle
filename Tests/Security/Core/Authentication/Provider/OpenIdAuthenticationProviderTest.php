@@ -105,14 +105,11 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldNotSupportOpenIdTokenIfProviderKeyDiffers()
     {
-        $providerKeyForProvider = 'main';
-        $providerKeyForToken    = 'connect';
-
-        $authProvider = new OpenIdAuthenticationProvider($providerKeyForProvider);
-        $token = new OpenIdToken($providerKeyForToken, 'identity');
+        $token = new OpenIdToken('the_other_provider_key', 'identity');
+        
+        $authProvider = new OpenIdAuthenticationProvider('the_provider_key');
 
         $this->assertFalse($authProvider->supports($token));
-        $this->assertNull($authProvider->authenticate($token));
     }
 
     public function testThatProviderKeyIsNotEmptyAfterDeserialization()
