@@ -1,5 +1,5 @@
 <?php
-namespace Fp\OpenIdBundle\Tests\Security\Core\Authentication;
+namespace Fp\OpenIdBundle\Tests\Security\Core\Authentication\Provider;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -495,7 +495,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function createUserManagerMock()
     {
-        return $this->getMock('Fp\OpenIdBundle\Tests\Security\Core\Authentication\UserManager');
+        return $this->getMock('Fp\OpenIdBundle\Tests\Security\Core\Authentication\Provider\UserManager');
     }
 
     protected function createUserMock()
