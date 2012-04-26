@@ -26,7 +26,9 @@ Add the following lines in your `deps` file:
 
 Now, run the vendors script to download the bundle and the library:
 
+```bash
 $ php bin/vendors install
+```
 
 ### Step 2: Configure the Autoloader
 
