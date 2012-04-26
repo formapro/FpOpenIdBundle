@@ -136,27 +136,6 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
     protected function getDefaultUser($identity, array $attributes)
     {
         return $identity;
-
-//        $attributes = array_merge(array(
-//            'contact/email' => null,
-//            'namePerson/first' => null,
-//            'namePerson/last' => null,
-//        ), $attributes);
-//
-//        $username = 'a user';
-//        if ($attributes['contact/email']) {
-//            $username = $attributes['contact/email'];
-//        } else if ($attributes['namePerson/first']) {
-//            $username = $attributes['namePerson/first'];
-//
-//            if ($attributes['namePerson/last']) {
-//                $username .= " {$attributes['namePerson/last']}";
-//            }
-//        }
-//
-//        $provider = parse_url($identity, PHP_URL_HOST);
-//
-//        return "{$username} by {$provider}";
     }
 
     /**

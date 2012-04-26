@@ -15,7 +15,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function couldBeConstructedWithoutAnyArguments()
+    public function couldBeConstructedWithProviderKeyAsArgument()
     {
         new OpenIdAuthenticationProvider($providerKey = 'main');
     }
@@ -196,13 +196,13 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateAuthenticatedTokenUsingIdentityIfUserProviderNotSet()
     {
-        $providerKey = 'main';
+        $expectedProviderKey = 'the_provider_key';
         $expectedIdentity = $expectedUser = 'the_identity';
         $expectedAttributes = array('foo' => 'foo', 'bar' => 'bar_val');
 
-        $authProvider = new OpenIdAuthenticationProvider($providerKey);
+        $authProvider = new OpenIdAuthenticationProvider($expectedProviderKey);
 
-        $token = new OpenIdToken($providerKey, $expectedIdentity);
+        $token = new OpenIdToken($expectedProviderKey, $expectedIdentity);
         $token->setUser('');
         $token->setAttributes($expectedAttributes);
 
@@ -212,6 +212,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertNotSame($token, $authenticatedToken);
         $this->assertTrue($authenticatedToken->isAuthenticated());
         $this->assertEquals($expectedIdentity, $authenticatedToken->getIdentity());
+        $this->assertEquals($expectedProviderKey, $authenticatedToken->getProviderKey());
         $this->assertEquals($expectedUser, $authenticatedToken->getUser());
         $this->assertEquals($expectedAttributes, $authenticatedToken->getAttributes());
         $this->assertEquals(array(), $authenticatedToken->getRoles());
@@ -222,7 +223,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateAuthenticatedTokenUsingUserProviderAndSearchByIdentity()
     {
-        $providerKey = 'main';
+        $expectedProviderKey = 'the_provider_key';
         $expectedIdentity = 'the_identity';
         $expectedAttributes = array('foo' => 'foo', 'bar' => 'bar_val');
 
@@ -242,12 +243,12 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
-            $providerKey,
+            $expectedProviderKey,
             $userProviderMock,
             $this->createUserCheckerMock()
         );
 
-        $token = new OpenIdToken($providerKey, $expectedIdentity);
+        $token = new OpenIdToken($expectedProviderKey, $expectedIdentity);
         $token->setUser('');
         $token->setAttributes($expectedAttributes);
 
@@ -257,6 +258,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertNotSame($token, $authenticatedToken);
         $this->assertTrue($authenticatedToken->isAuthenticated());
         $this->assertEquals($expectedIdentity, $authenticatedToken->getIdentity());
+        $this->assertEquals($expectedProviderKey, $authenticatedToken->getProviderKey());
         $this->assertEquals($expectedUserMock, $authenticatedToken->getUser());
         $this->assertEquals($expectedAttributes, $authenticatedToken->getAttributes());
 
@@ -340,7 +342,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldCreateAuthenticatedTokenUsingUserManagerCreateFromIdentityMethod()
     {
-        $providerKey = 'main';
+        $expectedProviderKey = 'main';
         $expectedIdentity = 'the_identity';
         $expectedAttributes = array('foo' => 'foo', 'bar' => 'bar_val');
 
@@ -366,13 +368,13 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $authProvider = new OpenIdAuthenticationProvider(
-            $providerKey,
+            $expectedProviderKey,
             $userManagerMock,
             $this->createUserCheckerMock(),
             $createIfNotExist = true
         );
 
-        $token = new OpenIdToken($providerKey, $expectedIdentity);
+        $token = new OpenIdToken($expectedProviderKey, $expectedIdentity);
         $token->setUser('');
         $token->setAttributes($expectedAttributes);
 
@@ -382,6 +384,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertNotSame($token, $authenticatedToken);
         $this->assertTrue($authenticatedToken->isAuthenticated());
         $this->assertEquals($expectedIdentity, $authenticatedToken->getIdentity());
+        $this->assertEquals($expectedProviderKey, $authenticatedToken->getProviderKey());
         $this->assertEquals($expectedUserMock, $authenticatedToken->getUser());
         $this->assertEquals($expectedAttributes, $authenticatedToken->getAttributes());
 
