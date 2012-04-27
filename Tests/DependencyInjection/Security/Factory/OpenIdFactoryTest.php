@@ -318,16 +318,17 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
 
         $providerDefinition = $containerBuilder->getDefinition($providerId);
 
-        $this->assertCount(4, $providerDefinition->getArguments());
+        $arguments = $providerDefinition->getArguments();
+        $this->assertCount(4, $arguments);
+        
+        $this->assertEquals($expectedProviderKey, $arguments['index_0']);
 
-        $this->assertEquals($expectedProviderKey, $providerDefinition->getArgument(0));
+        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $arguments[0]);
+        $this->assertEquals($expectedUserProviderId, (string) $arguments[0]);
 
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $providerDefinition->getArgument(1));
-        $this->assertEquals($expectedUserProviderId, (string) $providerDefinition->getArgument(1));
+        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $arguments[1]);
+        $this->assertEquals('security.user_checker', (string) $arguments[1]);
 
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $providerDefinition->getArgument(2));
-        $this->assertEquals('security.user_checker', (string) $providerDefinition->getArgument(2));
-
-        $this->assertEquals($expectedCreateUserIfNotExists, $providerDefinition->getArgument(3));
+        $this->assertEquals($expectedCreateUserIfNotExists, $arguments[2]);
     }
 }
