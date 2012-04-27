@@ -1,0 +1,7 @@
+# app/config/routing.yml
+fp_openid_security:
+    resource: "@FpOpenIdBundle/Resources/config/routing/security.xml"
+    
+secured_content:
+    pattern:  /secured_page
+    defaults:  { _controller: controller.test:securedAction }

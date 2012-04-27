@@ -1,0 +1,50 @@
+parameters:
+    locale:            en
+    secret:            ThisTokenIsNotSoSecretChangeIt
+
+security:
+    providers:
+        in_memory:
+            memory:
+                users:
+                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+
+    firewalls:
+        main:
+            pattern: ^/
+
+            fp_openid: 
+                relying_party: fp_openid.relying_party.fake
+                default_target_path:   /target_path
+
+            logout:       true
+            anonymous:    true
+
+    access_control:
+        - { path: ^/login_openid$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/secured_page, role: IS_AUTHENTICATED_OPENID }
+        
+framework:
+    #esi:             ~
+    #translator:      { fallback: %locale% }
+    test: ~
+    templating:      { engines: ['twig'] }
+    session:
+        storage_id: session.storage.mock_file
+    secret:          %secret%
+    charset:         UTF-8
+    router:          { resource: "%kernel.root_dir%/config/routing.yml" }
+    default_locale:  %locale%
+
+twig:
+    debug:            %kernel.debug%
+    strict_variables: %kernel.debug%
+    
+services:
+    fp_openid.relying_party.fake:
+        class: Fp\OpenIdBundle\Tests\Functional\FakeRelyingParty
+        
+    controller.test:
+        class: Fp\OpenIdBundle\Tests\Functional\TestController
+        
+        
