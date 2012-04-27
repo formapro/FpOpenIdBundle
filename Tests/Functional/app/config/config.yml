@@ -3,11 +3,13 @@ parameters:
     secret:            ThisTokenIsNotSoSecretChangeIt
 
 security:
+    factories:
+        - %kernel.root_dir%/../../../Resources/config/security_factories.xml
+    
     providers:
         in_memory:
-            memory:
-                users:
-                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+            users:
+                admin: { password: kitten, roles: 'ROLE_ADMIN' }
 
     firewalls:
         main:
@@ -30,11 +32,10 @@ framework:
     test: ~
     templating:      { engines: ['twig'] }
     session:
-        storage_id: session.storage.mock_file
+        storage_id: session.storage.filesystem
     secret:          %secret%
     charset:         UTF-8
     router:          { resource: "%kernel.root_dir%/config/routing.yml" }
-    default_locale:  %locale%
 
 twig:
     debug:            %kernel.debug%

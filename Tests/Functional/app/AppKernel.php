@@ -38,22 +38,6 @@ class AppKernel extends Kernel
     }
     
     /**
-     * @return string
-     */
-    public function getCacheDir()
-    {
-        return sys_get_temp_dir() . '/FpOpenIdBundle/cache';
-    }
-
-    /**
-     * @return string
-     */
-    public function getLogDir()
-    {
-        return sys_get_temp_dir() . '/FpOpenIdBundle/logs';
-    }
-
-    /**
      * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
      */
     public function registerContainerConfiguration(LoaderInterface $loader)

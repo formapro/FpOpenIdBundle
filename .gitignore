@@ -44,3 +44,5 @@ vendor/
 
 Tests/autoload.php
 Tests/phpunit.xml
+Tests/Functional/app/logs
+Tests/Functional/app/cache

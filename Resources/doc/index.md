@@ -94,9 +94,8 @@ security:
 
     providers:
         in_memory:
-            memory:
-                users:
-                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+            users:
+                admin: { password: kitten, roles: 'ROLE_ADMIN' }
 
     firewalls:
         main:
