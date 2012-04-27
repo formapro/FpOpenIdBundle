@@ -93,13 +93,9 @@ class OpenIdFactory extends AbstractFactory
         // with user provider
         if (isset($config['provider'])) {
             $provider
-                //TODO: correctrly use addArgument instead of replaceArgument but this doesn't work
-//                ->addArgument(new Reference($userProviderId))
-//                ->addArgument(new Reference('security.user_checker'))
-//                ->addArgument($config['create_user_if_not_exists'])
-                ->replaceArgument(1, new Reference($userProviderId))
-                ->replaceArgument(2, new Reference('security.user_checker'))
-                ->replaceArgument(3, $config['create_user_if_not_exists'])
+                ->addArgument(new Reference($userProviderId))
+                ->addArgument(new Reference('security.user_checker'))
+                ->addArgument($config['create_user_if_not_exists'])
             ;
         }
 
