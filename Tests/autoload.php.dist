@@ -1,6 +1,6 @@
 <?php
 
-$loader = include_once __DIR__ . '/../vendor/.composer/autoload.php';
+$loader = include_once __DIR__ . '/../vendor/autoload.php';
 
 spl_autoload_register(function($class) {
     if (0 === strpos($class, 'Fp\\OpenIdBundle\\')) {

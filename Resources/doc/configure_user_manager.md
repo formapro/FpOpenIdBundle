@@ -47,14 +47,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Fp\OpenIdBundle\Entity\Identity as BaseIdentity;
+use Fp\OpenIdBundle\Entity\UserIdentity as BaseUserIdentity;
 use Fp\OpenIdBundle\Model\UserIdentityInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="openid_identities")
  */
-class OpenIdIdentity extends BaseIdentity implements UserIdentityInterface
+class OpenIdIdentity extends BaseUserIdentity
 {
     /**
      * @var integer
@@ -77,22 +77,6 @@ class OpenIdIdentity extends BaseIdentity implements UserIdentityInterface
     {
         parent::__construct();
         // your own logic
-    }
-
-    /**
-     * {@iheritdoc}
-     */
-    public function setUser(UserInterface $user)
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * {@iheritdoc}
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 }
 
