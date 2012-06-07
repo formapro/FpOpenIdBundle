@@ -18,7 +18,7 @@ Add the following lines in your `deps` file:
 [FpOpenIdBundle]
     git=git://github.com/formapro/FpOpenIdBundle.git
     target=bundles/Fp/OpenIdBundle
-    branch=1.2
+    version=origin/1.2
 
 [LightOpenId]
     git=git://github.com/formapro/LightOpenID.git
