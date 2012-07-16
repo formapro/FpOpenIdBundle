@@ -22,14 +22,14 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
      */
     private $relyingParty;
 
-    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, array $options = array(), AuthenticationSuccessHandlerInterface $successHandler = null, AuthenticationFailureHandlerInterface $failureHandler = null, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
+    public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, AuthenticationSuccessHandlerInterface $successHandler, AuthenticationFailureHandlerInterface $failureHandler, array $options = array(), LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null) 
     {
         $options = array_merge(array(
             'required_attributes' => array(),
             'optional_attributes' => array(),
         ), $options);
-
-        parent::__construct($securityContext, $authenticationManager, $sessionStrategy, $httpUtils,$providerKey, $options, $successHandler, $failureHandler, $logger, $dispatcher);
+        
+        parent::__construct($securityContext, $authenticationManager, $sessionStrategy, $httpUtils, $providerKey, $successHandler, $failureHandler, $options, $logger, $dispatcher);
     }
 
     /**

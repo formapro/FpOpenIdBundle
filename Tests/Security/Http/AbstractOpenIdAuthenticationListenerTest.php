@@ -14,7 +14,8 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
             'providerKey',
-            $options = array()
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
         );
 
         $this->getMockForAbstractClass(
@@ -34,7 +35,8 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
             'providerKey',
-            $options = array()
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
         );
 
         $listener = $this->getMockForAbstractClass(
@@ -64,6 +66,8 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array(
                 'required_attributes' => $expectedRequiredAttributes
             )
@@ -91,6 +95,8 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -116,6 +122,8 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -146,6 +154,8 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array(
                 'optional_attributes' => $expectedOptionalAttributes
             )
@@ -246,5 +256,15 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
     protected function createRelyingPartyMock()
     {
         return $this->getMock('Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface');
+    }
+    
+    protected function createAuthenticationSuccessHandlerMock()
+    {
+        return $this->getMock('Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface');
+    }
+    
+    protected function createAuthenticationFailureHandlerMock()
+    {
+        return $this->getMock('Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface');
     }
 }

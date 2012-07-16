@@ -24,6 +24,7 @@
         "psr-0": { "Fp\\OpenIdBundle": "" }
     },
     "target-dir": "Fp/OpenIdBundle",
+    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-master": "1.3-dev"

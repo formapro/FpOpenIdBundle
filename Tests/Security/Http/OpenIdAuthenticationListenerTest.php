@@ -23,6 +23,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
     }
@@ -51,6 +53,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $httpUtilsMock,
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -73,6 +77,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -103,6 +109,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -143,6 +151,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -183,6 +193,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array('required_attributes' => $expectedRequiredAttributes)
         );
 
@@ -228,6 +240,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array('optional_attributes' => $expectedOptionalAttributes)
         );
 
@@ -269,6 +283,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -301,6 +317,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
             'providerKey',
+            $this->createAuthenticationSuccessHandlerMock(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -356,9 +374,9 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
             'providerKey',
-            $options = array(),
-            null,
-            $authenticationFailureHandlerMock
+            $this->createAuthenticationSuccessHandlerMock(),
+            $authenticationFailureHandlerMock,
+            $options = array()
         );
 
         $listener->setRelyingParty($relyingPartyMock);
@@ -416,6 +434,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $httpUtilsStub,
             'providerKey',
+            $this->createAuthenticationSuccessHandlerStub(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -470,6 +490,8 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             $this->createSessionAuthenticationStrategyMock(),
             $httpUtilsStub,
             'providerKey',
+            $this->createAuthenticationSuccessHandlerStub(),
+            $this->createAuthenticationFailureHandlerMock(),
             $options = array()
         );
 
@@ -601,5 +623,23 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         ;
 
         return $getResponseEventMock;
+    }
+
+    protected function createAuthenticationSuccessHandlerMock()
+    {
+        return $this->getMock('Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface');
+    }
+
+    protected function createAuthenticationSuccessHandlerStub()
+    {
+        $handlerMock = $this->createAuthenticationSuccessHandlerMock();
+        
+        $handlerMock
+            ->expects($this->any())
+            ->method('onAuthenticationSuccess')
+            ->will($this->returnValue(new Response()))
+        ;
+        
+        return $handlerMock;
     }
 }
