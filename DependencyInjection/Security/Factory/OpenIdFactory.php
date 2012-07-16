@@ -14,8 +14,10 @@ class OpenIdFactory extends AbstractFactory
      */
     public function __construct()
     {
+        $this->defaultSuccessHandlerOptions['login_path'] = '/login_openid';
+        $this->defaultFailureHandlerOptions['login_path'] = '/login_openid';
+        
         $this->addOption('create_user_if_not_exists', false);
-        $this->addOption('login_path', '/login_openid');
     }
 
     /**
