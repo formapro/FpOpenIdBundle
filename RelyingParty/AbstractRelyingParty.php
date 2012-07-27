@@ -33,12 +33,12 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
         if (false == $this->supports($request)) {
             throw new \InvalidArgumentException('The relying party does not support the request');
         }
-
-        if ($identifier = $request->get("openid_identifier", false)) {
-            return $this->verify($request);
+        
+        if ($request->query->has('openid_mode') || $request->request->has('openid_mode')) {
+            return $this->complete($request);
         }
 
-        return $this->complete($request);
+        return $this->verify($request);
     }
 
     /**
