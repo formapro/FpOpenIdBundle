@@ -137,6 +137,25 @@ class OpenIdFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldAddCheckPathToConfigurationWithExpectedDefaultValue()
+    {
+        $factory = new OpenIdFactory();
+
+        $treeBuilder = new TreeBuilder();
+
+        $factory->addConfiguration($treeBuilder->root('name'));
+
+        $childeren = $this->readAttribute($treeBuilder->buildTree(), 'children');
+
+        $this->assertArrayHasKey('check_path', $childeren);
+
+        $this->assertInstanceOf('Symfony\Component\Config\Definition\ScalarNode', $childeren['check_path']);
+        $this->assertEquals('/login_check_openid', $childeren['check_path']->getDefaultValue());
+    }
+
+    /**
+     * @test
+     */
     public function shouldReturnArrayWhichContainsProviderListenerAndEntryPointIds()
     {
         $containerBuilder = new ContainerBuilder(new ParameterBag());
