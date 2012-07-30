@@ -118,7 +118,7 @@ class AbstractRelyingPartyTest extends \PHPUnit_Framework_TestCase
     public function shouldCallVerifyAndReturnRedirectResponseIfOpenIdIdentifierParameterPresentInRequest()
     {
         $request = Request::create('uri');
-        $request->request->set('openid_identifier', 'an_id');
+        $request->request->set('openid_param', 'param');
 
         $relyingParty = new AbstractRelyingPartyMock();
 
@@ -133,7 +133,7 @@ class AbstractRelyingPartyTest extends \PHPUnit_Framework_TestCase
     public function shouldCallCompleteAndReturnIdentityProviderResponseIfOpenIdIdentifierParameterNotPresent()
     {
         $request = Request::create('uri');
-        $request->request->set('openid_parameter', 'param');
+        $request->request->set('openid_mode', 'id_res');
 
         $relyingParty = new AbstractRelyingPartyMock();
 

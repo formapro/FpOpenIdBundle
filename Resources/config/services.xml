@@ -51,8 +51,10 @@
             class="%fp_openid.relying_party.collection.class%"
         >
             <call method="append">
-                <argument type="service" id="fp_openid.relying_party.light_open_id" />
                 <argument type="service" id="fp_openid.relying_party.recovered_failure" />
+            </call>
+            <call method="append">
+                <argument type="service" id="fp_openid.relying_party.light_open_id" />
             </call>
         </service>
     </services>
