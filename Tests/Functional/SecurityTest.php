@@ -51,7 +51,7 @@ class SecurityTest extends WebTestCase
         $client = $this->createClient();
 
         $client->request('GET', '/login_openid');
-        $client->request('GET', '/login_check?'. FakeRelyingParty::COMPLETE_REQUEST .'=1');
+        $client->request('GET', '/login_check_openid?'. FakeRelyingParty::COMPLETE_REQUEST .'=1');
 
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
         $this->assertEquals(
@@ -81,7 +81,7 @@ class SecurityTest extends WebTestCase
         $client = $this->createClient();
 
         $client->request('GET', '/login_openid');
-        $client->request('GET', '/login_check?'. FakeRelyingParty::COMPLETE_REQUEST .'=1');
+        $client->request('GET', '/login_check_openid?'. FakeRelyingParty::COMPLETE_REQUEST .'=1');
         $client->request('GET', '/secured_page');
         
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
