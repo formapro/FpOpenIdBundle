@@ -8,7 +8,7 @@
         <default key="_controller">FpOpenIdBundle:Security:login</default>
     </route>
 
-    <route id="fp_openid_security_check" pattern="/login_check">
+    <route id="fp_openid_security_check" pattern="/login_check_openid">
         <default key="_controller">FpOpenIdBundle:Security:check</default>
     </route>
 
