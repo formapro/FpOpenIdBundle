@@ -23,5 +23,6 @@
     "autoload": {
         "psr-0": { "Fp\\OpenIdBundle": "" }
     },
+    "minimum-stability": "dev",
     "target-dir": "Fp/OpenIdBundle"
 }
