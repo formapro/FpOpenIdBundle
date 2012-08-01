@@ -32,6 +32,7 @@ security:
             fp_openid:
                 # options added or changed by openid listener:
                 login_path:                   /login_openid
+                check_path:                   /login_check_openid
                 create_user_if_not_exists:    false
                 relying_party:                fp_openid.relying_party.default
                 required_attributes:          []

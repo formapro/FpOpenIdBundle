@@ -2,7 +2,7 @@ Configure User Manager\Provider
 ===============================
 
 If you want to have a user in the token you have to configure user provider. It could be done in several ways.
-Here will be described a way when a user can be created in the code.
+Here will be described a way when a user can be created in the code. In [this section](interactive_user_creation.md) described "interactive" method.
 It means that you can create a user instance without asking a human about any information like email and so on.
 
 ### Step 1. Create Identity class
