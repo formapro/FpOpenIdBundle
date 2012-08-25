@@ -36,7 +36,7 @@ class FpOpenIdExtension extends Extension
     protected function loadDbDriver(array $configs, ContainerBuilder $container, $loader)
     {
         $dbDriver = strtolower($configs['db_driver']);
-        $supportedDbDrivers = array('orm');
+        $supportedDbDrivers = array('orm', 'mongodb');
 
         if (false == in_array($dbDriver, $supportedDbDrivers)) {
             throw new \InvalidArgumentException(sprintf(

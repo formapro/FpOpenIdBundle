@@ -82,15 +82,80 @@ class OpenIdIdentity extends BaseUserIdentity
 
 ```
 
+**b) Doctrine MongoDB ODM Identity class**
+
+If you're persisting your users via the Doctrine MongoDB ODM, then your `User` class
+should live in the `Document` namespace of your bundle and look like this to
+start:
+
+```php
+<?php
+//src/Acme/DemoBundle/Document/OpenIdIdentity.php
+
+namespace Acme\DemoBundle\Document;
+
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+
+use Fp\OpenIdBundle\Document\UserIdentity as BaseUserIdentity;
+
+/**
+ * @MongoDB\Document(collection="openid_identities")
+ */
+class OpenIdIdentity extends BaseUserIdentity
+{
+    /**
+     * @MongoDB\Id(strategy="auto")
+     */
+    protected $id;
+    
+    /**
+     * {@inheritdoc}
+     * @MongoDB\String
+     */
+    protected $identity;
+
+    /**
+     * {@inheritdoc}
+     * @MongoDB\Hash
+     */
+    protected $attributes;
+
+    /**
+     * @var Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @MongoDB\ReferenceOne(targetDocument="Acme\DemoBundle\Document\User", simple=true)
+     */
+    protected $user;
+
+    public function __construct()
+    {
+        parent::__construct();
+        // your own logic
+    }
+}
+```
+
+
 ### Step 2. Configure FpOpenIdBundle
 
 Now when we have our own Identity class we can tell the bundle about it:
+
+**a) Doctrine ORM**
 
 ``` yaml
 # app/config/config.yml
 fp_open_id:
     db_driver: orm
     identity_class: Acme\DemoBundle\Entity\OpenIdIdentity
+```
+**b) Doctrine MongoDB ODM**
+
+``` yaml
+# app/config/config.yml
+fp_open_id:
+    db_driver: mongodb
+    identity_class: Acme\DemoBundle\Document\OpenIdIdentity
 ```
 
 ### Step 3. Create UserManager
@@ -100,6 +165,7 @@ fp_open_id:
 To create your `UserManager` class you have to implement `UserManagerInterface` or extend `UserManager` and overwrite `createUserFromIdentity` method.
 Lets go the second way:
 
+***For Doctrine ORM***
 ```php
 <?php
 //src/Acme/DemoBundle/Entity/OpenIdUserManager.php
@@ -120,14 +186,47 @@ class OpenIdUserManager extends UserManager
 
 ```
 
+***For Doctrine MongoDB ODM***
+```php
+<?php
+//src/Acme/DemoBundle/Document/OpenIdUserManager.php
+
+namespace Acme\DemoBundle\Document;
+
+use Fp\OpenIdBundle\Model\UserManager;
+
+class OpenIdUserManager extends UserManager
+{
+    public function createUserFromIdentity($identity, array $attributes = array())
+    {
+        //put your user creation logic here
+
+        return $user; // must always return UserInterface instance or throw an exception.
+    }
+}
+
+```
+
 **b) Add to container**
 
+***For Doctrine ORM***
 ```yaml
 # src/Acme/DemoBundle/Resources/config/services.yml
 
 services:
     acme.demo.openid_user_manager:
         class: Acme\DemoBundle\Entity\OpenIdUserManager
+        arguments: [@fp_openid.identity_manager]
+
+```
+
+***For Doctrine MongoDB ODM***
+```yaml
+# src/Acme/DemoBundle/Resources/config/services.yml
+
+services:
+    acme.demo.openid_user_manager:
+        class: Acme\DemoBundle\Document\OpenIdUserManager
         arguments: [@fp_openid.identity_manager]
 
 ```

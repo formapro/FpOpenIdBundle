@@ -11,7 +11,7 @@ class FpOpenIdExtensionTest extends \PHPUnit_Framework_TestCase
     public static function provideSupportedDbDrivers()
     {
         return array(
-            array('orm')
+            array('orm','mongodb')
         );
     }
 
