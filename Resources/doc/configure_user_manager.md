@@ -165,7 +165,7 @@ fp_open_id:
 To create your `UserManager` class you have to implement `UserManagerInterface` or extend `UserManager` and overwrite `createUserFromIdentity` method.
 Lets go the second way:
 
-***a) For Doctrine ORM***
+***For Doctrine ORM***
 ```php
 <?php
 //src/Acme/DemoBundle/Entity/OpenIdUserManager.php
@@ -186,7 +186,7 @@ class OpenIdUserManager extends UserManager
 
 ```
 
-***b) For Doctrine MongoDB ODM***
+***For Doctrine MongoDB ODM***
 ```php
 <?php
 //src/Acme/DemoBundle/Document/OpenIdUserManager.php
@@ -209,7 +209,7 @@ class OpenIdUserManager extends UserManager
 
 **b) Add to container**
 
-***a) For Doctrine ORM***
+***For Doctrine ORM***
 ```yaml
 # src/Acme/DemoBundle/Resources/config/services.yml
 
@@ -220,7 +220,7 @@ services:
 
 ```
 
-***b) For Doctrine MongoDB ODM***
+***For Doctrine MongoDB ODM***
 ```yaml
 # src/Acme/DemoBundle/Resources/config/services.yml
 
