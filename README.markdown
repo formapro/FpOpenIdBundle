@@ -52,6 +52,7 @@ Credits
 * `UserManager` inspired by [FOSOAuthServerBundle](https://github.com/FriendsOfSymfony/FOSOAuthServerBundle) bundle.
 * Installation doc adapted from [FOSUserBundle](https://github.com/FriendsOfSymfony/FOSUserBundle) doc.
 * [formapro](https://github.com/formapro) for supporting open source movement.
+* [dr-fozzy](https://github.com/dr-fozzy) for adding support of mongodb driver.
 
 Reporting an issue or a feature request
 ---------------------------------------
