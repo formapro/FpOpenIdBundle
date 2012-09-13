@@ -23,6 +23,10 @@
     "autoload": {
         "psr-0": { "Fp\\OpenIdBundle": "" }
     },
+    "suggest": {
+        "doctrine/orm": "If you want store identities to database",
+        "doctrine/mongodb-odm": "If you want store identities to mongodb"
+    },
     "target-dir": "Fp/OpenIdBundle",
     "minimum-stability": "dev"
 }

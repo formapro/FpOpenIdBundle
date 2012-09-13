@@ -66,11 +66,16 @@ class OpenIdIdentity extends BaseUserIdentity
     protected $id;
 
     /**
-     * @var Symfony\Component\Security\Core\User\UserInterface
-     *
-     * @ORM\OneToOne(targetEntity="Acme\DemoBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     */
+      * The relation is made eager by purpose. 
+      * More info here: {@link https://github.com/formapro/FpOpenIdBundle/issues/54}
+      * 
+      * @var Symfony\Component\Security\Core\User\UserInterface
+      *
+      * @ORM\ManyToOne(targetEntity="Acme\DemoBundle\Entity\User", fetch="EAGER")
+      * @ORM\JoinColumns({
+      *   @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+      * })
+      */
     protected $user;
 
     public function __construct()
