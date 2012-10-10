@@ -29,6 +29,10 @@ class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
         $result = $this->getRelyingParty()->manage($openIdRequest);
 
         if ($result instanceof RedirectResponse) {
+            if ($targetUrl = $request->get($this->options['target_path_parameter'], null, true)) {
+                $request->getSession()->set('_security.' . $this->providerKey . '.target_path', $targetUrl);
+            }
+            
             return $result;
         }
 
