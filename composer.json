@@ -18,7 +18,7 @@
     "require": {
         "php": ">=5.3.2",
         "fp/lightopenid": "dev-master",
-        "symfony/framework-bundle": ">=2.1,<2.3-dev"
+        "symfony/symfony": ">=2.1,<2.3-dev"
     },
     "autoload": {
         "psr-0": { "Fp\\OpenIdBundle": "" }
