@@ -1,5 +1,5 @@
 <?php
-namespace Fp\OpenIdBundle\Tests\DepenedencyInjection;
+namespace Fp\OpenIdBundle\Tests\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
