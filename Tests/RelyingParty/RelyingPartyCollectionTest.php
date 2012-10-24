@@ -202,14 +202,14 @@ class RelyingPartyCollectionTest extends \PHPUnit_Framework_TestCase
         $relyingPartyOneMock
             ->expects($this->once())
             ->method('manage')
-            ->with($this->equalTo($expectedRequest))
+            ->with($expectedRequest)
         ;
 
         $collection = new RelyingPartyCollection;
 
         $collection->append($relyingPartyOneMock);
 
-        $collection->manage($this->createRequestMock());
+        $collection->manage($expectedRequest);
     }
 
     /**
