@@ -20,6 +20,9 @@
         "fp/lightopenid": "dev-master",
         "symfony/symfony": ">=2.1,<2.3-dev"
     },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*@stable"
+    },
     "autoload": {
         "psr-0": { "Fp\\OpenIdBundle": "" }
     },
@@ -29,6 +32,9 @@
     },
     "target-dir": "Fp/OpenIdBundle",
     "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.3-dev"
