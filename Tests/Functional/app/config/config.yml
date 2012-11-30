@@ -16,6 +16,7 @@ security:
             fp_openid: 
                 relying_party: fp_openid.relying_party.fake
                 default_target_path:   /target_path
+                target_path_parameter: _custom_target_path
 
             logout:       true
             anonymous:    true

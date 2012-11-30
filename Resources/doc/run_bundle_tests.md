@@ -12,13 +12,13 @@ $ cd FpOpenIdBundle
 
 ```bash
 curl -s http://getcomposer.org/installer | php
-php composer.phar install
+php composer.phar install --dev
 ```
 
 * Run tests:
 
 ```bash
-phpunit
+./bin/phpunit
 ```
 
 Enjoy!

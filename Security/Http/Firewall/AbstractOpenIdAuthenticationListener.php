@@ -27,6 +27,7 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
         $options = array_merge(array(
             'required_attributes' => array(),
             'optional_attributes' => array(),
+            'target_path_parameter' => '_target_path',
         ), $options);
         
         parent::__construct($securityContext, $authenticationManager, $sessionStrategy, $httpUtils, $providerKey, $successHandler, $failureHandler, $options, $logger, $dispatcher);

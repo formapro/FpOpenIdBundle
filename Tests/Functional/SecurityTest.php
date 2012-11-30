@@ -46,6 +46,28 @@ class SecurityTest extends WebTestCase
     /**
      * @test
      */
+    public function shouldSetSubmittedTargetPathToSession()
+    {
+        $client = $this->createClient();
+
+        $crawler = $client->request('GET', '/login_openid');
+
+        $client->request('POST', '/login_check_openid', array(
+            'openid_identifier' => FakeRelyingParty::VERIFY_IDENTIFIER,
+            '_custom_target_path' => '/the_target_path_url',
+        ));
+
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        
+        /** @var $session \Symfony\Component\HttpFoundation\Session\SessionInterface */
+        $session = $client->getContainer()->get('session');
+        $this->assertTrue($session->has('_security.main.target_path'));
+        $this->assertEquals('/the_target_path_url', $session->get('_security.main.target_path'));
+    }
+
+    /**
+     * @test
+     */
     public function shouldRedirectToDefaultTargetOnCompleteRequest()
     {
         $client = $this->createClient();
