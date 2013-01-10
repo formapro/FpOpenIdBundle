@@ -127,4 +127,4 @@ Congratulations! You have been authenticated by Google. Now, you can try access 
 
 ### Next Step
 
-Your are now ready to configure an [UserProvider](configure_user_provider.md)
+Your are now ready to configure an [UserProvider](configure_user_manager.md)
