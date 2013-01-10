@@ -113,7 +113,7 @@ Acme\DemoBundle\Entity\OpenIdIdentity:
 
 #### 1-b. Example: Doctrine MongoDB ODM Identity class
 
-If you're persisting your users via the Doctrine MongoDB ODM, then your `User` class should live in the `Document` namespace of your bundle and look like this:
+If you're persisting your users via the Doctrine MongoDB ODM, then your `Identity` class should live in the `Document` namespace of your bundle and look like this:
 
 ```php
 <?php
@@ -164,7 +164,7 @@ class OpenIdIdentity extends BaseUserIdentity
 
 ### Step 2. Configure FpOpenIdBundle
 
-Now when we have our own Identity class we can tell the bundle about it:
+Now that we have our own Identity class we should tell the bundle about it:
 
 #### 2-a. With Doctrine ORM
 
@@ -187,7 +187,7 @@ fp_open_id:
 
 #### 3-a. Create Manager
 
-After a successful authentication with the OpenID provider, FpOpenIdBundle `UserManager` will be called - precisely the `loadUserByIdentity` method. It searches for the corresponding OpenIdIdentity in the database. If not found, your User Manager `createUserFromIdentity` method will be called.
+After a successful authentication with the OpenID provider, FpOpenIdBundle `UserManager` will be called - precisely the `loadUserByIdentity` method. It searches for the corresponding Identity in the database. If not found, your User Manager `createUserFromIdentity` method will be called.
 
 Let's implement our own logic.
 To create your `UserManager` class you have to implement `UserManagerInterface` or extend `UserManager` and overwrite `createUserFromIdentity` method.
@@ -308,10 +308,10 @@ services:
         arguments: [@fp_openid.identity_manager]
 ```
 
-### Step 4. Configure OpenId Firewall
+### Step 4. Configure OpenID Firewall
 
 Now we can update the `security.yml` file with some new settings.
-The main point is to add our new User Manager as a provider.
+The main point is to add our new User Manager as a provider:
 
 ```yaml
 # app/config/security.yml
@@ -351,4 +351,4 @@ You can use the `/logout` url to logout users.
 > For example, when an `User` is removed, remove the corresponding `OpenIdIdentity` (no more used).
 > Within our previous example, if an `User` e-mail address is modified, we should remove the `OpenIdIdentity` too. Otherwise he will still be able to log in with it!
 
-Return to [index](index.md) to learn more
+Return to [index](index.md) to learn more.
