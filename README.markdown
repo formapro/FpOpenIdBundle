@@ -13,8 +13,6 @@ are not supported any more.
 
 **Caution:** This bundle is developed in sync with [symfony's repository](https://github.com/symfony/symfony).
 
-**Caution:** Since Symfony 2.2 introduce BC break in Security Component. I have to restrict version of 1.3 to support only Symfony 2.1. For all who want use the bundle with Symfony 2.2 please use 2.2 version.
-
 [![Build Status](https://secure.travis-ci.org/formapro/FpOpenIdBundle.png?branch=master)](http://travis-ci.org/formapro/FpOpenIdBundle)
 
 Documentation
