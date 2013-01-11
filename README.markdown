@@ -22,7 +22,7 @@ Documentation
 
 The bulk of the documentation is stored in the `Resources/doc/index.md` file in this bundle:
 
-[Read the Documentation for master](https://github.com/formapro/FpOpenIdBundle/blob/master/Resources/doc/index.md)
+[Read the Documentation for master](FpOpenIdBundle/blob/master/Resources/doc/index.md)
 
 [Read the Documentation for 1.3.0 (for Symfony 2.1.x)](https://github.com/formapro/FpOpenIdBundle/blob/1.3/Resources/doc/index.md)
 
