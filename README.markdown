@@ -22,12 +22,12 @@ The bulk of the documentation is stored in the `Resources/doc/index.md` file in 
 
 [Read the Documentation for master](FpOpenIdBundle/blob/master/Resources/doc/index.md)
 
-[Read the Documentation for 1.2.0 (for Symfony 2.0.x)](https://github.com/formapro/FpOpenIdBundle/blob/1.2/Resources/doc/index.md)
+[Read the Documentation for 1.2.0 (for Symfony 2.0.x)](FpOpenIdBundle/blob/1.2/Resources/doc/index.md)
 
 Installation
 ------------
 
-All the installation instructions are located in [documentation](https://github.com/formapro/FpOpenIdBundle/blob/master/Resources/doc/index.md).
+All the installation instructions are located in [documentation](FpOpenIdBundle/blob/master/Resources/doc/index.md).
 
 License
 -------
@@ -40,7 +40,7 @@ About
 -----
 
 FpOpenIdBundle is a [formapro](https://github.com/formapro) initiative.
-See also the list of [contributors](https://github.com/formapro/FpOpenIdBundle/contributors).
+See also the list of [contributors](contributors).
 
 Credits
 -------
