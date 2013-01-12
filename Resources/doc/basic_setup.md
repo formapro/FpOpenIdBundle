@@ -123,7 +123,7 @@ Let's use Google as authentication provider, enter:
 https://www.google.com/accounts/o8/id
 ```
 
-You may be asked to login to your Google account, and you will be asked to grant access to your Google account.
+You may be asked to login to your Google account.
 
 Congratulations! You have been authenticated by Google. Now, you can try access `/secured_area`.
 

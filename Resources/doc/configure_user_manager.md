@@ -213,6 +213,14 @@ use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationExceptio
 
 class OpenIdUserManager extends UserManager
 {
+    // we will use an EntityManager, so inject it via constructor
+    public function __construct(IdentityManagerInterface $identityManager, EntityManager $entityManager)
+    {
+        parent::__construct($identityManager);
+
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * @param string $identity
      *  an OpenID token. With Google it looks like:
@@ -250,14 +258,6 @@ class OpenIdUserManager extends UserManager
         // end of example
 
         return $user; // you must return an UserInterface instance (or throw an exception)
-    }
-    
-    // we used an EntityManager, so inject it in constructor
-    public function __construct(IdentityManagerInterface $identityManager, EntityManager $entityManager)
-    {
-        parent::__construct($identityManager);
-
-        $this->entityManager = $entityManager;
     }
 }
 ```
