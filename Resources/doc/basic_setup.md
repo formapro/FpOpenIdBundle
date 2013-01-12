@@ -17,6 +17,8 @@ Add the following lines in your `composer.json` file:
 }
 ```
 
+**Note:** You may want to adapt this line to use a specific version. For example, to use 1.3 (Symfony 2.1), ```"fp/openid-bundle": "1.3.*"```
+
 Now, run composer.phar to download the bundle:
 
 ```bash
