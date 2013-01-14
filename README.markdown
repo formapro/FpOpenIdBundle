@@ -13,7 +13,7 @@ are not supported any more.
 
 **Caution:** This bundle is developed in sync with [symfony's repository](https://github.com/symfony/symfony).
 
-**Caution:** Since Symfony 2.2 introduce BC break in Security Component. I have to restrict version of 1.3 to support only Symfony 2.1. For all who want use the bundle with Symfony 2.2 please use 2.2 version.
+**Caution:** For symfony 2.2 use 2.2 version of the bundle.
 
 [![Build Status](https://secure.travis-ci.org/formapro/FpOpenIdBundle.png?branch=master)](http://travis-ci.org/formapro/FpOpenIdBundle)
 
@@ -22,16 +22,16 @@ Documentation
 
 The bulk of the documentation is stored in the `Resources/doc/index.md` file in this bundle:
 
-[Read the Documentation for master](https://github.com/formapro/FpOpenIdBundle/blob/master/Resources/doc/index.md)
+[Read the Documentation for master](FpOpenIdBundle/blob/master/Resources/doc/index.md)
 
-[Read the Documentation for 1.3.0 (for Symfony 2.1.x)](https://github.com/formapro/FpOpenIdBundle/blob/1.3/Resources/doc/index.md)
+[Read the Documentation for 1.3.0 (for Symfony 2.1.x)](FpOpenIdBundle/blob/1.3/Resources/doc/index.md)
 
-[Read the Documentation for 1.2.0 (for Symfony 2.0.x)](https://github.com/formapro/FpOpenIdBundle/blob/1.2/Resources/doc/index.md)
+[Read the Documentation for 1.2.0 (for Symfony 2.0.x)](FpOpenIdBundle/blob/1.2/Resources/doc/index.md)
 
 Installation
 ------------
 
-All the installation instructions are located in [documentation](https://github.com/formapro/FpOpenIdBundle/blob/master/Resources/doc/index.md).
+All the installation instructions are located in [documentation](FpOpenIdBundle/blob/master/Resources/doc/index.md).
 
 License
 -------
@@ -44,7 +44,7 @@ About
 -----
 
 FpOpenIdBundle is a [formapro](https://github.com/formapro) initiative.
-See also the list of [contributors](https://github.com/formapro/FpOpenIdBundle/contributors).
+See also the list of [contributors](contributors).
 
 Credits
 -------
