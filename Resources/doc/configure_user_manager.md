@@ -239,7 +239,7 @@ class OpenIdUserManager extends UserManager
         }
         // in this example, we fetch User entities by e-mail
         $user = $this->entityManager->getRepository('AcmeDemoBundle:User')->findOneBy(array(
-            'e-mail' => $attributes['contact/email']
+            'email' => $attributes['contact/email']
         ));
 
         if (null === $user) {
