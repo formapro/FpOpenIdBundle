@@ -4,6 +4,7 @@ namespace Fp\OpenIdBundle\Security\Core\Authentication\Provider;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\User\ChainUserProvider;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -47,7 +48,9 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
             throw new \InvalidArgumentException('$userChecker cannot be null, if $userProvider is not null.');
         }
 
-        if ($createIfNotExists && !$userProvider instanceof UserManagerInterface) {
+        if ($createIfNotExists &&
+                !($userProvider instanceof UserManagerInterface ||
+                ($userProvider instanceof ChainUserProvider && $this->findUserManagerInterfaceImplementingProvider($userProvider)))) {
             throw new \InvalidArgumentException('The $userProvider must implement UserManagerInterface if $createIfNotExists is true.');
         }
 
@@ -118,7 +121,12 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
                 throw $e;
             }
 
-            $user = $this->userProvider->createUserFromIdentity($identity, $attributes);
+            $provider = $this->userProvider instanceof ChainUserProvider
+                ? $this->findUserManagerInterfaceImplementingProvider($this->userProvider)
+                : $this->userProvider
+            ;
+
+            $user = $provider->createUserFromIdentity($identity, $attributes);
         }
 
         if (false == $user instanceof UserInterface) {
@@ -158,5 +166,33 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
         $newToken->setAuthenticated(true);
 
         return $newToken;
+    }
+
+    /**
+     * @param ChainUserProvider $userProvider
+     * @return UserManagerInterface
+     */
+    private function findUserManagerInterfaceImplementingProvider(ChainUserProvider $userProvider)
+    {
+        foreach ($this->getChainedProviders($userProvider) as $provider) {
+            if ($provider instanceof UserManagerInterface) {
+                return $provider;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param ChainUserProvider $userProvider
+     * @return array
+     */
+    private function getChainedProviders(ChainUserProvider $userProvider)
+    {
+        $object   = new \ReflectionObject($userProvider);
+        $property = $object->getProperty('providers');
+        $property->setAccessible(true);
+
+        return $property->getValue($userProvider);
     }
 }
