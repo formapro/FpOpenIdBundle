@@ -330,7 +330,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldAddIdentityProviderResponseToEachThrownAuthenticationExceptionAsExtraInformation()
+    public function shouldAddTokenToEachThrownAuthenticationException()
     {
         $expectedIdentityProviderResponse = new IdentityProviderResponse('an_identity');
         $expectedAuthenticationException = new AuthenticationException('an error');
@@ -360,7 +360,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             ->method('onAuthenticationFailure')
             ->will($this->returnCallback(function($request, $exception) use($testcase, $expectedAuthenticationException, $expectedIdentityProviderResponse) {
                 $testcase->assertSame($exception, $expectedAuthenticationException);
-                $testcase->assertSame($expectedIdentityProviderResponse, $exception->getExtraInformation());
+                $testcase->assertInstanceOf('Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken', $exception->getToken());
 
                 return new Response('');
             }))

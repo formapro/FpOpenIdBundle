@@ -43,7 +43,7 @@ class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
             try {
                 return $this->authenticationManager->authenticate($token);
             } catch (AuthenticationException $e) {
-                $e->setExtraInformation($result);
+                $e->setToken($token);
 
                 throw $e;
             }
