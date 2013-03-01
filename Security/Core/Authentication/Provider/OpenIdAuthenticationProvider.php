@@ -90,7 +90,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
         } catch (AuthenticationException $e) {
             throw $e;
         } catch (\Exception $e) {
-            throw new AuthenticationServiceException($e->getMessage(), null, (int) $e->getCode(), $e);
+            throw new AuthenticationServiceException($e->getMessage(), (int) $e->getCode(), $e);
         }
     }
 
