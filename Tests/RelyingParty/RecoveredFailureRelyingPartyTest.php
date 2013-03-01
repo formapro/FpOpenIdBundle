@@ -1,6 +1,7 @@
 <?php
 namespace Fp\OpenIdBundle\Tests\RelyingParty;
 
+use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
@@ -87,12 +88,12 @@ class RecoveredFailureRelyingPartyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldSupportIfAuthenticationErrorWithIdentityProviderResponseSet()
+    public function shouldSupportIfAuthenticationErrorWithOpenIdTokenProviderResponseSet()
     {
-        $identityProviderResponse = new IdentityProviderResponse('an_identity');
+        $token = new OpenIdToken('aProviderKey', 'identity');
 
         $error = new AuthenticationException('an error');
-        $error->setExtraInformation($identityProviderResponse);
+        $error->setToken($token);
 
         $session = $this->createSessionStub($returnGet = $error);
         $request = $this->createRequestStub($returnGet = 1, $returnSession = $session);
@@ -105,7 +106,7 @@ class RecoveredFailureRelyingPartyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The relying party does not support the request
      */
     public function throwIfTryManageNotSupportedRequest()
@@ -123,10 +124,14 @@ class RecoveredFailureRelyingPartyTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldReturnIdentityProviderResponseOnManage()
     {
-        $expectedIdentityProviderResponse = new IdentityProviderResponse('an_identity');
+        $expectedIdentity = 'theIdentity';
+        $expectedAttributes = array('foo' => 'fooVal', 'bar' => 'barVal');
+        
+        $token = new OpenIdToken('aProviderKey', $expectedIdentity);
+        $token->setAttributes($expectedAttributes);
 
         $error = new AuthenticationException('an error');
-        $error->setExtraInformation($expectedIdentityProviderResponse);
+        $error->setToken($token);
 
         $session = $this->createSessionStub($returnGet = $error);
         $request = $this->createRequestStub($returnGet = 1, $returnSession = $session);
@@ -136,16 +141,19 @@ class RecoveredFailureRelyingPartyTest extends \PHPUnit_Framework_TestCase
         //guard
         $this->assertTrue($relyingParty->supports($request));
 
-        $this->assertSame($expectedIdentityProviderResponse, $relyingParty->manage($request));
+        $actualIdentityProviderResponse = $relyingParty->manage($request);
+        $this->assertInstanceOf('Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse', $actualIdentityProviderResponse);
+        $this->assertEquals($expectedIdentity,$actualIdentityProviderResponse->getIdentity());
+        $this->assertEquals($expectedAttributes,$actualIdentityProviderResponse->getAttributes());
     }
 
     /**
      * @test
      */
     public function shouldRemoveErrorFromSessionOnManage()
-    {
+    {        
         $error = new AuthenticationException('an error');
-        $error->setExtraInformation(new IdentityProviderResponse('an_identity'));
+        $error->setToken(new OpenIdToken('aProviderKey', 'anIdentity'));
 
         $session = $this->createSessionStub($returnGet = $error);
         $session

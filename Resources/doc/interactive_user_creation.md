@@ -89,8 +89,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Acme\DemoBundle\Entity\User;
 
 use Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationCanceledException;
-use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
 use Fp\OpenIdBundle\RelyingParty\RecoveredFailureRelyingParty;
+use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken
 
 class SecurityController extends Controller
 {
@@ -107,18 +107,18 @@ class SecurityController extends Controller
         }
 
         /**
-         * @var $identityProvidedResponse IdentityProviderResponse
+         * @var $token OpenIdToken
          */
-        $identityProvidedResponse = $failure->getExtraInformation();
-        if (false == $identityProvidedResponse instanceof IdentityProviderResponse) {
-            throw new \LogicException('The failure does not contain IdentityProvidedResponse in extraInfo, Is the failure come from openid?');
+        $token = $failure->getToken();
+        if (false == $token instanceof OpenIdToken) {
+            throw new \LogicException('The failure does not contain OpenIdToken, Is the failure come from openid?');
         }
 
         $attributes = array_merge(array(
             'contact/email' => '',
             'namePerson/first' => '',
             'namePerson/last' => '',
-            ), $identityProvidedResponse->getAttributes())
+            ), $token->getAttributes())
         ;
         
         //the next code is pseudo. You have to adopt it to your needs.
@@ -134,7 +134,7 @@ class SecurityController extends Controller
                 $this->getUserManager()->updateUser($user);
 
                 $identity = $this->getIdentityManager()->create();
-                $identity->setIdentity($identityProvidedResponse->getIdentity());
+                $identity->setIdentity($token->getIdentity());
                 $identity->setAttributes($attributes);
                 $identity->setUser($user);
                 $this->getIdentityManager()->update($identity);

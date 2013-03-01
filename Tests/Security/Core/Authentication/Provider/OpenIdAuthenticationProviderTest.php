@@ -273,7 +273,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationServiceException
+     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationServiceException
      * @expectedExceptionMessage User provider did not return an implementation of user interface.
      */
     public function throwIfUserProviderReturnNotUserInstance()
@@ -304,7 +304,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException Symfony\Component\Security\Core\Exception\UsernameNotFoundException
+     * @expectedException \Symfony\Component\Security\Core\Exception\UsernameNotFoundException
      * @expectedExceptionMessage Cannot find user by openid identity
      */
     public function shouldNotCreateUserIfNotExistIfFlagNotSet()
@@ -399,7 +399,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      *
-     * @expectedException Symfony\Component\Security\Core\Exception\AuthenticationServiceException
+     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationServiceException
      * @expectedExceptionMessage User provider did not return an implementation of user interface.
      */
     public function throwIfUserManagerCreateNotUserInstance()
@@ -467,7 +467,7 @@ class OpenIdAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
             $this->assertSame($expectedPreviousException, $e->getPrevious());
             $this->assertEquals($expectedMessage, $e->getMessage());
             $this->assertEquals($expectedCode, $e->getCode());
-            $this->assertNull($e->getExtraInformation());
+            $this->assertNull($e->getToken());
 
             return;
         }
