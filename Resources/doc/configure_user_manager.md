@@ -291,7 +291,7 @@ class OpenIdUserManager extends UserManager
 # src/Acme/DemoBundle/Resources/config/services.yml
 services:
     acme.demo.openid_user_manager:
-        class: Acme\DemoBundle\Entity\OpenIdUserManager
+        class: Acme\DemoBundle\Security\User\OpenIdUserManager
         # we used an EntityManager, so don't forget it in dependency injection
         # you may want to adapt it, only the IdentityManager is mandatory
         arguments: [@fp_openid.identity_manager, @doctrine.orm.entity_manager]
@@ -304,7 +304,7 @@ services:
 # src/Acme/DemoBundle/Resources/config/services.yml
 services:
     acme.demo.openid_user_manager:
-        class: Acme\DemoBundle\Document\OpenIdUserManager
+        class: Acme\DemoBundle\Security\User\OpenIdUserManager
         arguments: [@fp_openid.identity_manager]
 ```
 
