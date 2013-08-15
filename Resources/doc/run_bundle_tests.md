@@ -12,7 +12,7 @@ $ cd FpOpenIdBundle
 
 ```bash
 curl -s http://getcomposer.org/installer | php
-php composer.phar install --dev
+php composer.phar install
 ```
 
 * Run tests:
