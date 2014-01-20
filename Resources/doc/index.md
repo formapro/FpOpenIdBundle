@@ -16,6 +16,8 @@ The installation is in two steps:
 
 The following documents are available:
 - [Interactive User Creation](interactive_user_creation.md)
+- [Fixed List Of OpenID Providers](fixed_list_of_openid_providers.md)
+- [Use Links Instead Of Form Submission](use_links_instead_of_form_submission.md)
 - [Configuration Reference](configuration_reference.md)
 - [Install as Git Submodules](install_as_git_submodules.md)
 - [Run Bundle Tests](run_bundle_tests.md)
