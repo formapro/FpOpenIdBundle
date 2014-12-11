@@ -65,7 +65,7 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
      */
     protected function guessTrustRoot(Request $request)
     {
-        return $request->attributes->get('trust_root', $request->getHttpHost());
+        return $request->attributes->get('trust_root', $request->getSchemeAndHttpHost());
     }
 
     /**

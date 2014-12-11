@@ -246,7 +246,7 @@ class AbstractRelyingPartyTest extends \PHPUnit_Framework_TestCase
 
         $result = $relyingParty->callProtected('guessTrustRoot', array($request));
 
-        $this->assertEquals($request->getHttpHost(), $result);
+        $this->assertEquals($request->getSchemeAndHttpHost(), $result);
     }
 
     /**
