@@ -9,7 +9,7 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
     public function couldBeConstructedWithRequiredSetOfArguments()
     {
         $constructorArguments = array(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
@@ -30,7 +30,7 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
     public function shouldSetEmptyArrayAsRequiredAttributesOptionsInConstructor()
     {
         $constructorArguments = array(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
@@ -61,7 +61,7 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
         );
 
         $constructorArguments = array(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
@@ -90,7 +90,7 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
     public function shouldSetEmptyArrayAsOptionalAttributesOptionsInConstructor()
     {
         $constructorArguments = array(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
@@ -117,7 +117,7 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
     public function shouldAddOptionalAttributesToOptionsWithEmptyArrayAsDefaultValue()
     {
         $constructorArguments = array(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
@@ -149,7 +149,7 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
         );
 
         $constructorArguments = array(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
@@ -233,9 +233,9 @@ class AbstractOpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCa
         $listener->setRelyingParty($this->createRelyingPartyMock());
     }
 
-    protected function createSecurityContextMock()
+    protected function createTokenStorageMock()
     {
-        return $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
+        return $this->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
     }
 
     protected function createAuthenticationManagerMock()

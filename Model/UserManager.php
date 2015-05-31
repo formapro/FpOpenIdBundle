@@ -7,9 +7,6 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 
 use Fp\OpenIdBundle\Security\Core\User\UserManagerInterface;
-use Fp\OpenIdBundle\Model\IdentityManagerInterface;
-use Fp\OpenIdBundle\Model\IdentityInterface;
-use Fp\OpenIdBundle\Model\UserIdentityInterface;
 
 class UserManager implements UserManagerInterface
 {

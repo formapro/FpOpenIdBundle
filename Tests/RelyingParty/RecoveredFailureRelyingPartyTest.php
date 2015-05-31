@@ -2,11 +2,10 @@
 namespace Fp\OpenIdBundle\Tests\RelyingParty;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Fp\OpenIdBundle\RelyingParty\RecoveredFailureRelyingParty;
-use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
 
 /**
  * @author Kotlyar Maksim <kotlyar.maksim@gmail.com>
@@ -59,7 +58,7 @@ class RecoveredFailureRelyingPartyTest extends \PHPUnit_Framework_TestCase
         $session
             ->expects($this->once())
             ->method('get')
-            ->with($this->equalTo(SecurityContextInterface::AUTHENTICATION_ERROR))
+            ->with($this->equalTo(Security::AUTHENTICATION_ERROR))
             ->will($this->returnValue(null))
         ;
 
@@ -159,7 +158,7 @@ class RecoveredFailureRelyingPartyTest extends \PHPUnit_Framework_TestCase
         $session
             ->expects($this->once())
             ->method('remove')
-            ->with($this->equalTo(SecurityContextInterface::AUTHENTICATION_ERROR))
+            ->with($this->equalTo(Security::AUTHENTICATION_ERROR))
         ;
 
         $request = $this->createRequestStub($returnGet = 1, $returnSession = $session);

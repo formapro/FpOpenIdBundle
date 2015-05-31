@@ -18,7 +18,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
     public function couldBeConstructedWithRequiredSetOfArguments()
     {
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsMock(),
@@ -48,7 +48,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $httpUtilsMock,
@@ -72,7 +72,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $eventMock = $this->createGetResponseEventStub($this->createRequestMock());
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
@@ -104,7 +104,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
@@ -146,7 +146,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $eventMock = $this->createGetResponseEventStub($requestMock);
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
@@ -188,7 +188,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $eventMock = $this->createGetResponseEventStub($requestMock);
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
@@ -235,7 +235,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $eventMock = $this->createGetResponseEventStub($requestMock);
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
@@ -278,7 +278,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         ;
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
@@ -312,7 +312,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $eventMock = $this->createGetResponseEventStub($requestMock);
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $this->createAuthenticationManagerMock(),
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
@@ -369,7 +369,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $eventMock = $this->createGetResponseEventStub($requestMock);
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $authenticationManagerMock,
             $this->createSessionAuthenticationStrategyMock(),
             $this->createHttpUtilsStub($checkRequestPathReturn = true),
@@ -429,7 +429,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $eventMock = $this->createGetResponseEventStub($requestMock);
 
         $listener = new OpenIdAuthenticationListener(
-            $this->createSecurityContextMock(),
+            $this->createTokenStorageMock(),
             $authenticationManagerMock,
             $this->createSessionAuthenticationStrategyMock(),
             $httpUtilsStub,
@@ -475,7 +475,7 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($expectedToken))
         ;
 
-        $securityContextMock = $this->createSecurityContextMock();
+        $securityContextMock = $this->createTokenStorageMock();
         $securityContextMock
             ->expects($this->once())
             ->method('setToken')
@@ -561,9 +561,9 @@ class OpenIdAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         return $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
     }
 
-    protected function createSecurityContextMock()
+    protected function createTokenStorageMock()
     {
-        return $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
+        return $this->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
     }
 
     protected function createAuthenticationManagerMock()

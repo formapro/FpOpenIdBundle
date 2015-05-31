@@ -2,9 +2,6 @@
 namespace Fp\OpenIdBundle\RelyingParty;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContextInterface;
-
-use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
 
 class RelyingPartyCollection implements RelyingPartyInterface
 {
