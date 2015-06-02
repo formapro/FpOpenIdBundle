@@ -2,7 +2,7 @@
 namespace Fp\OpenIdBundle\RelyingParty;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Security;
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
 
@@ -18,7 +18,7 @@ class RecoveredFailureRelyingParty implements RelyingPartyInterface
         if (false == $request->get(self::RECOVERED_QUERY_PARAMETER)) {
             return false;
         }
-        if (false == $error = $request->getSession()->get(SecurityContextInterface::AUTHENTICATION_ERROR)) {
+        if (false == $error = $request->getSession()->get(Security::AUTHENTICATION_ERROR)) {
             return false;
         }
         if (false == $error->getToken() instanceof OpenIdToken) {
@@ -37,9 +37,9 @@ class RecoveredFailureRelyingParty implements RelyingPartyInterface
             throw new \InvalidArgumentException('The relying party does not support the request');
         }
 
-        $error = $request->getSession()->get(SecurityContextInterface::AUTHENTICATION_ERROR);
+        $error = $request->getSession()->get(Security::AUTHENTICATION_ERROR);
 
-        $request->getSession()->remove(SecurityContextInterface::AUTHENTICATION_ERROR);
+        $request->getSession()->remove(Security::AUTHENTICATION_ERROR);
 
         return new IdentityProviderResponse(
             $error->getToken()->getIdentity(),

@@ -1,7 +1,7 @@
 <?php
 namespace Fp\OpenIdBundle\Controller;
 
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\DependencyInjection\ContainerAware;
 
 class SecurityController extends ContainerAware
@@ -11,14 +11,14 @@ class SecurityController extends ContainerAware
         $request = $this->container->get('request');
         /* @var $request \Symfony\Component\HttpFoundation\Request */
         $session = $request->getSession();
-        /* @var $session \Symfony\Component\HttpFoundation\Session */
+        /* @var $session \Symfony\Component\HttpFoundation\Session\SessionInterface */
 
         // get the error if any (works with forward and redirect -- see below)
-        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-        } elseif (null !== $session && $session->has(SecurityContext::AUTHENTICATION_ERROR)) {
-            $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
-            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
+        if ($request->attributes->has(Security::AUTHENTICATION_ERROR)) {
+            $error = $request->attributes->get(Security::AUTHENTICATION_ERROR);
+        } elseif (null !== $session && $session->has(Security::AUTHENTICATION_ERROR)) {
+            $error = $session->get(Security::AUTHENTICATION_ERROR);
+            $session->remove(Security::AUTHENTICATION_ERROR);
         } else {
             $error = '';
         }

@@ -2,7 +2,6 @@
 namespace Fp\OpenIdBundle\Security\Core\Authentication\Token;
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
-use Symfony\Component\HttpFoundation\Response;
 
 class OpenIdToken extends AbstractToken
 {
