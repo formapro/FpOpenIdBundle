@@ -3,13 +3,10 @@ namespace Fp\OpenIdBundle\Security\Http\Firewall;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\AuthenticationServiceException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
-use Fp\OpenIdBundle\Security\Http\Event\IdentityProvidedEvent;
-use Fp\OpenIdBundle\Security\Http\SecurityEvents;
 
 class OpenIdAuthenticationListener extends AbstractOpenIdAuthenticationListener
 {

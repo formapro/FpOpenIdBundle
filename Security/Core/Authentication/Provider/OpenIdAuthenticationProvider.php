@@ -12,7 +12,6 @@ use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProvid
 
 use Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken;
 use Fp\OpenIdBundle\Security\Core\User\UserManagerInterface;
-use Fp\OpenIdBundle\Security\Core\Exception\UsernameByIdentityNotFoundException;
 
 class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
 {

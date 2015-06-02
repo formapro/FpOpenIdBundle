@@ -4,15 +4,15 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="fp_openid_security_login" pattern="/login_openid">
+    <route id="fp_openid_security_login" path="/login_openid">
         <default key="_controller">FpOpenIdBundle:Security:login</default>
     </route>
 
-    <route id="fp_openid_security_check" pattern="/login_check_openid">
+    <route id="fp_openid_security_check" path="/login_check_openid">
         <default key="_controller">FpOpenIdBundle:Security:check</default>
     </route>
 
-    <route id="fp_openid_security_logout" pattern="/logout">
+    <route id="fp_openid_security_logout" path="/logout">
         <default key="_controller">FpOpenIdBundle:Security:logout</default>
     </route>
 
