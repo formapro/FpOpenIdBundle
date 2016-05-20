@@ -2,10 +2,13 @@
 namespace Fp\OpenIdBundle\Controller;
 
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class SecurityController extends ContainerAware
+class SecurityController implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+    
     public function loginAction()
     {
         $request = $this->container->get('request');
