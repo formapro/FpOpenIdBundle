@@ -64,11 +64,15 @@ Reporting an issue or a feature request
 Issues and feature requests are tracked in the [Github issue tracker](https://github.com/formapro/FpOpenIdBundle/issues). 
 Read this [note](https://github.com/formapro/FpOpenIdBundle/blob/master/Resources/doc/run_bundle_tests.md) to find out how to run the bundle's tests.
 
-## Developed by Forma-Pro
+## Developed by Forma Pro
 
-Forma-Pro is a full stack development company which interests also spread to open source development. 
-Being a team of strong professionals we have an aim an ability to help community by developing cutting edge solutions in the areas of e-commerce, docker & microservice oriented architecture where we have accumulated a huge many-years experience. 
-Our main specialization is Symfony framework based solution, but we are always looking to the technologies that allow us to do our job the best way. We are committed to creating solutions that revolutionize the way how things are developed in aspects of architecture & scalability.
+Forma Pro is a senior product engineering company helping product organizations build and evolve complex, data-intensive software.
 
-If you have any questions and inquires about our open source development, this product particularly or any other matter feel free to contact at opensource@forma-pro.com
+Our public open-source work reflects more than two decades of engineering history, including PHP/Symfony libraries, infrastructure tooling, workflow components, and messaging systems.
+
+Today, our work spans marketplaces and platforms, partner and attribution systems, FinTech, logistics, EdTech, data-intensive workflows, matching and recommendation systems, and applied AI/ML.
+
+Learn more at [forma-pro.com](https://forma-pro.com).
+
+For questions about this project or our open-source work, contact us at opensource@forma-pro.com.
 
