@@ -1,18 +1,19 @@
 <?php
 namespace Fp\OpenIdBundle\Entity;
 
-use Doctrine\ORM\EntityManager;
-
-use Fp\OpenIdBundle\Model\IdentityManagerInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ObjectRepository;
 use Fp\OpenIdBundle\Model\IdentityInterface;
+use Fp\OpenIdBundle\Model\IdentityManagerInterface;
 
-class IdentityManager implements  IdentityManagerInterface
+class IdentityManager implements IdentityManagerInterface
 {
     protected $entityManager;
 
     protected $identityClass;
 
-    public function __construct(EntityManager $entityManager, $identityClass)
+    public function __construct(EntityManagerInterface $entityManager, $identityClass)
     {
         $this->entityManager = $entityManager;
         $this->identityClass = $identityClass;
@@ -55,7 +56,7 @@ class IdentityManager implements  IdentityManagerInterface
     }
 
     /**
-     * @return \Doctrine\ORM\EntityRepository
+     * @return ObjectRepository
      */
     protected function getIdentityRepository()
     {

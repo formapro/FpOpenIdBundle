@@ -45,3 +45,5 @@ vendor/
 Tests/autoload.php
 Tests/phpunit.xml
 bin
+
+.idea/*

@@ -44,7 +44,7 @@ class OpenIdToken extends AbstractToken
     }
 
     /**
-     * @return void
+     * @return string
      */
     public function getCredentials()
     {
@@ -54,18 +54,28 @@ class OpenIdToken extends AbstractToken
     /**
      * {@inheritdoc}
      */
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize(array($this->providerKey, $this->identity, parent::serialize()));
+        return array(
+            $this->providerKey,
+            $this->identity,
+            \is_callable('parent::__serialize') ? parent::__serialize() : unserialize(parent::serialize()),
+        );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function unserialize($str)
+    public function __unserialize(array $data): void
     {
-        list($this->providerKey, $this->identity, $parentStr) = unserialize($str);
+        list($this->providerKey, $this->identity, $parentData) = $data;
 
-        parent::unserialize($parentStr);
+        $parentData = \is_array($parentData) ? $parentData : unserialize($parentData);
+
+        if (\is_callable('parent::__serialize')) {
+            parent::__unserialize($parentData);
+        } else {
+            parent::unserialize(serialize($parentData));
+        }
     }
 }

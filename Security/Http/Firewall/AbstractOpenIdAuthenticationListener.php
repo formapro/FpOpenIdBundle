@@ -1,4 +1,5 @@
 <?php
+
 namespace Fp\OpenIdBundle\Security\Http\Firewall;
 
 use Psr\Log\LoggerInterface;
@@ -17,7 +18,7 @@ use Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface;
 abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticationListener
 {
     /**
-     * @var \Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface $relyingParty
+     * @var RelyingPartyInterface $relyingParty
      */
     private $relyingParty;
 
@@ -35,7 +36,7 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
     /**
      * The relying party is required for the listener but since It is not possible overwrite constructor I use setter with the check in getter
      *
-     * @param \Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface $relyingParty
+     * @param RelyingPartyInterface $relyingParty
      */
     public function setRelyingParty(RelyingPartyInterface $relyingParty)
     {
@@ -43,9 +44,9 @@ abstract class AbstractOpenIdAuthenticationListener extends AbstractAuthenticati
     }
 
     /**
+     * @return RelyingPartyInterface
      * @throws \RuntimeException
      *
-     * @return \Fp\OpenIdBundle\RelyingParty\RelyingPartyInterface
      */
     protected function getRelyingParty()
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Fp\OpenIdBundle\RelyingParty;
 
 class IdentityProviderResponse implements \Serializable

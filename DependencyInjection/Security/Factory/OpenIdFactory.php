@@ -2,8 +2,8 @@
 namespace Fp\OpenIdBundle\DependencyInjection\Security\Factory;
 
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
 
@@ -92,7 +92,7 @@ class OpenIdFactory extends AbstractFactory
     {
         $providerId = 'security.authentication.provider.fp_openid.'.$id;
         $provider = $container
-            ->setDefinition($providerId, new DefinitionDecorator('security.authentication.provider.fp_openid'))
+            ->setDefinition($providerId, new ChildDefinition('security.authentication.provider.fp_openid'))
             ->replaceArgument(0, $id);
 
         // with user provider
@@ -115,7 +115,7 @@ class OpenIdFactory extends AbstractFactory
         $entryPointId = 'security.authentication.form_entry_point.'.$id;
 
         $container
-            ->setDefinition($entryPointId, new DefinitionDecorator('security.authentication.form_entry_point'))
+            ->setDefinition($entryPointId, new ChildDefinition('security.authentication.form_entry_point'))
             ->addArgument(new Reference('security.http_utils'))
             ->addArgument($config['login_path'])
             ->addArgument($config['use_forward'])

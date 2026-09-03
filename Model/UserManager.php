@@ -11,7 +11,7 @@ use Fp\OpenIdBundle\Security\Core\User\UserManagerInterface;
 class UserManager implements UserManagerInterface
 {
     /**
-     * @var \Fp\OpenIdBundle\Model\IdentityManagerInterface
+     * @var IdentityManagerInterface
      */
     protected $identityManager;
 
@@ -34,11 +34,11 @@ class UserManager implements UserManagerInterface
     /**
      * @param string $identity
      *
-     * @throws \Symfony\Component\Security\Core\Exception\UsernameNotFoundException if identity not found.
-     * @throws \Symfony\Component\Security\Core\Exception\UsernameNotFoundException if identity does not implement UserIdentityInterface.
-     * @throws \Symfony\Component\Security\Core\Exception\UsernameNotFoundException if user identity does not a user instance set.
-     *
      * @return UserInterface
+     * @throws UsernameNotFoundException if identity does not implement UserIdentityInterface.
+     * @throws UsernameNotFoundException if user identity does not a user instance set.
+     *
+     * @throws UsernameNotFoundException if identity not found.
      */
     protected function loadUserByIdentity($identity)
     {

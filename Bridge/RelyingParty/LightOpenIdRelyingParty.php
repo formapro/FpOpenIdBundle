@@ -1,13 +1,13 @@
 <?php
 namespace Fp\OpenIdBundle\Bridge\RelyingParty;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
+use Fp\OpenIdBundle\LightOpenId\LightOpenID;
 use Fp\OpenIdBundle\RelyingParty\AbstractRelyingParty;
-use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
 use Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationCanceledException;
 use Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationValidationFailedException;
+use Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class LightOpenIdRelyingParty extends AbstractRelyingParty
 {
@@ -44,16 +44,18 @@ class LightOpenIdRelyingParty extends AbstractRelyingParty
             ));
         }
 
-        return new IdentityProviderResponse($lightOpenId->identity, $lightOpenId->getAttributes());
+        return new IdentityProviderResponse($lightOpenId->data['openid_identity'], $lightOpenId->getAttributes());
     }
 
     /**
      * @param string $trustRoot
      *
-     * @return \LightOpenID
+     * @return LightOpenID
+     *
+     * @throws \ErrorException
      */
     protected function createLightOpenID($trustRoot)
     {
-        return new \LightOpenID($trustRoot);
+        return new LightOpenID($trustRoot);
     }
 }

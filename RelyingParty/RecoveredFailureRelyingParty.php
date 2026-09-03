@@ -1,4 +1,5 @@
 <?php
+
 namespace Fp\OpenIdBundle\RelyingParty;
 
 use Symfony\Component\HttpFoundation\Request;

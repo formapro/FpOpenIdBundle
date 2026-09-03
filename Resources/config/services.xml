@@ -1,61 +1,62 @@
 <?xml version="1.0" ?>
 
-<container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+<container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://symfony.com/schema/dic/services"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
         <parameter key="security.authentication.provider.fp_openid.class">Fp\OpenIdBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider</parameter>
         <parameter key="security.authentication.listener.fp_openid.class">Fp\OpenIdBundle\Security\Http\Firewall\OpenIdAuthenticationListener</parameter>
         <parameter key="security.access.fp_openid_authenticated_voter.class">Fp\OpenIdBundle\Security\Core\Authorization\Voter\OpenIdAuthenticatedVoter</parameter>
-
         <parameter key="fp_openid.relying_party.light_open_id.class">Fp\OpenIdBundle\Bridge\RelyingParty\LightOpenIdRelyingParty</parameter>
         <parameter key="fp_openid.relying_party.recovered_failure.class">Fp\OpenIdBundle\RelyingParty\RecoveredFailureRelyingParty</parameter>
         <parameter key="fp_openid.relying_party.collection.class">Fp\OpenIdBundle\RelyingParty\RelyingPartyCollection</parameter>
     </parameters>
 
     <services>
-
         <service
-            id="security.authentication.provider.fp_openid"
-            class="%security.authentication.provider.fp_openid.class%"
-            public="false"
-            abstract="true"
+                id="security.authentication.provider.fp_openid"
+                class="%security.authentication.provider.fp_openid.class%"
+                public="false"
+                abstract="true"
         >
-            <argument /> <!-- Provider-shared Key -->
+            <argument/> <!-- Provider-shared Key -->
         </service>
 
         <service
-            id="security.authentication.listener.fp_openid"
-            class="%security.authentication.listener.fp_openid.class%"
-            parent="security.authentication.listener.abstract"
-            public="false"
-            abstract="true"
+                id="security.authentication.listener.fp_openid"
+                class="%security.authentication.listener.fp_openid.class%"
+                parent="security.authentication.listener.abstract"
+                public="false"
+                abstract="true"
+        />
+        <service
+                id="security.access.fp_openid_authenticated_voter"
+                class="%security.access.fp_openid_authenticated_voter.class%"
+                public="false"
         >
+            <tag name="security.voter"/>
         </service>
 
-        <service
-            id="security.access.fp_openid_authenticated_voter"
-            class="%security.access.fp_openid_authenticated_voter.class%"
-            public="false"
-        >
-            <tag name="security.voter" />
-        </service>
+        <service id="fp_openid.relying_party.light_open_id" class="%fp_openid.relying_party.light_open_id.class%"/>
 
-        <service id="fp_openid.relying_party.light_open_id" class="%fp_openid.relying_party.light_open_id.class%"></service>
-
-        <service id="fp_openid.relying_party.recovered_failure" class="%fp_openid.relying_party.recovered_failure.class%"></service>
+        <service id="fp_openid.relying_party.recovered_failure"
+                 class="%fp_openid.relying_party.recovered_failure.class%"/>
 
         <service
-            id="fp_openid.relying_party.default"
-            class="%fp_openid.relying_party.collection.class%"
+                id="fp_openid.relying_party.default"
+                class="%fp_openid.relying_party.collection.class%"
         >
             <call method="append">
-                <argument type="service" id="fp_openid.relying_party.recovered_failure" />
+                <argument type="service" id="fp_openid.relying_party.recovered_failure"/>
             </call>
             <call method="append">
-                <argument type="service" id="fp_openid.relying_party.light_open_id" />
+                <argument type="service" id="fp_openid.relying_party.light_open_id"/>
             </call>
         </service>
+
+        <service id="Fp\OpenIdBundle\Security\Core\User\UserManagerInterface" alias="fp_openid.user_manager" />
+        <service id="Fp\OpenIdBundle\Model\IdentityManagerInterface" alias="fp_openid.identity_manager" />
+
     </services>
 </container>

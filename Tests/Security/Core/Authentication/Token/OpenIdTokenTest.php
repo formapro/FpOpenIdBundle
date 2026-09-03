@@ -59,7 +59,7 @@ class OpenIdTokenTest extends \PHPUnit_Framework_TestCase
         $expectedIdentity = 'the_identity';
         
         $token = new OpenIdToken('provider_key', $expectedIdentity);
-        
+
         $unserializedToken = unserialize(serialize($token));
 
         $this->assertEquals($expectedIdentity, $unserializedToken->getIdentity());

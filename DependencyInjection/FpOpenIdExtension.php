@@ -28,7 +28,7 @@ class FpOpenIdExtension extends Extension
 
     /**
      * @param array $configs
-     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     * @param ContainerBuilder $container
      *
      * @throws \InvalidArgumentException
      */

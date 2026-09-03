@@ -21,12 +21,12 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
     protected $providerKey;
 
     /**
-     * @var null|\Symfony\Component\Security\Core\User\UserProviderInterface
+     * @var null|UserProviderInterface
      */
     protected $userProvider;
 
     /**
-     * @var null|\Symfony\Component\Security\Core\User\UserCheckerInterface
+     * @var null|UserCheckerInterface
      */
     protected $userChecker;
 
@@ -36,8 +36,9 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
     protected $createIfNotExists;
 
     /**
-     * @param null|\Symfony\Component\Security\Core\User\UserProviderInterface $userProvider
-     * @param null|\Symfony\Component\Security\Core\User\UserCheckerInterface $userChecker
+     * @param string $providerKey
+     * @param null|UserProviderInterface $userProvider
+     * @param null|UserCheckerInterface $userChecker
      * @param bool $createIfNotExists
      */
     public function __construct($providerKey, UserProviderInterface $userProvider = null, UserCheckerInterface $userChecker = null, $createIfNotExists = false)
@@ -106,7 +107,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
      *
      * @throws \RuntimeException if provider did not provide a user implementation.
      *
-     * @return \Symfony\Component\Security\Core\User\UserInterface
+     * @return UserInterface
      */
     protected function getProviderUser($identity, array $attributes)
     {
@@ -128,7 +129,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
     }
 
     /**
-     * @param \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken $token
+     * @param OpenIdToken $token
      *
      * @return string
      */
@@ -143,7 +144,7 @@ class OpenIdAuthenticationProvider implements AuthenticationProviderInterface
      * @param array $roles
      * @param mixed $user
      *
-     * @return \Fp\OpenIdBundle\Security\Core\Authentication\Token\OpenIdToken
+     * @return OpenIdToken
      */
     protected function createAuthenticatedToken($identity, array $attributes, array $roles, $user)
     {

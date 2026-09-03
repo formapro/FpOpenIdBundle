@@ -1,20 +1,16 @@
 <?php
+
 namespace Fp\OpenIdBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class SecurityController implements ContainerAwareInterface
+class SecurityController extends Controller
 {
-    use ContainerAwareTrait;
-    
-    public function loginAction()
+    public function loginAction(Request $request)
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        /* @var $request \Symfony\Component\HttpFoundation\Request */
         $session = $request->getSession();
-        /* @var $session \Symfony\Component\HttpFoundation\Session\SessionInterface */
 
         // get the error if any (works with forward and redirect -- see below)
         if ($request->attributes->has(Security::AUTHENTICATION_ERROR)) {
@@ -31,10 +27,9 @@ class SecurityController implements ContainerAwareInterface
             $error = $error->getMessage();
         }
 
-        return $this->container->get('templating')->renderResponse(
-            'FpOpenIdBundle:Security:login.html.'.$this->container->getParameter('fp_openid.template.engine'),
-            array('error' => $error)
-        );
+        return $this->render('FpOpenIdBundle:Security:login.html.twig', [
+           'error' => $error
+        ]);
     }
 
     public function checkAction()

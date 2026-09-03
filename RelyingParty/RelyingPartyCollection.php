@@ -47,9 +47,9 @@ class RelyingPartyCollection implements RelyingPartyInterface
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
-     * @return \Fp\OpenIdBundle\RelyingPartyRelyingPartyInterface|null
+     * @return RelyingPartyInterface|null
      */
     protected function findRelyingPartySupportedRequest(Request $request)
     {

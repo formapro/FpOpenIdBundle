@@ -1,6 +1,9 @@
 <?php
 namespace Fp\OpenIdBundle\RelyingParty;
 
+use Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationCanceledException;
+use Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationValidationFailedException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractRelyingParty implements RelyingPartyInterface
@@ -42,24 +45,24 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return RedirectResponse
      */
     abstract protected function verify(Request $request);
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
-     * @throws \Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationValidationFailedException
-     * @throws \Fp\OpenIdBundle\RelyingParty\Exception\OpenIdAuthenticationCanceledException
+     * @return IdentityProviderResponse
+     * @throws OpenIdAuthenticationCanceledException
      *
-     * @return \Fp\OpenIdBundle\RelyingParty\IdentityProviderResponse
+     * @throws OpenIdAuthenticationValidationFailedException
      */
     abstract protected function complete(Request $request);
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
      * @return string
      */
@@ -69,7 +72,7 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
      * @return string
      */
@@ -79,7 +82,7 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
      * @return string
      */
@@ -89,7 +92,7 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
     }
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      *
      * @return string
      */
@@ -99,7 +102,7 @@ abstract class AbstractRelyingParty implements RelyingPartyInterface
     }
 
     /**
-    * @param \Symfony\Component\HttpFoundation\Request $request
+    * @param Request $request
     *
     * @return string
     */
