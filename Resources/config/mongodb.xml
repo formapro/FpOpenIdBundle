@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="fp_openid.identity_manager.class">Fp\OpenIdBundle\Document\IdentityManager</parameter>
+        <parameter key="fp_openid.identity_manager.class">Fp\OpenIdBundle\Document\IdentityManagerInterface</parameter>
         <parameter key="fp_openid.user_manager.class">Fp\OpenIdBundle\Model\UserManager</parameter>
     </parameters>
 
